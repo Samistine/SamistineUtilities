@@ -1,0 +1,16 @@
+name: SamistineUtilities
+version: ${project.version}-b${BUILD_NUMBER}
+
+git_repo: https://github.com/Samistine/SamistineUtilities
+git_hash: ${git_hash}
+jenkins_build: ${BUILD_NUMBER}
+
+author: Samuel Seidel + Others
+main: com.samistine.samistineutilities.SamistineUtilities
+description: A collection of utilities that are meant to aid in the running of a server.
+commands:
+   disablephysics:
+      description: disable physics, add or remove regions
+      usage: /disablephysics [ mode [on|off|region] | addregion (regionname) (worldname) [(x)|(y)|(z) (x)|(y)|(z)] | removeregion (regionname) ]
+      permission: JCPD.disablephysics
+      permission-message: You don't have permission.
