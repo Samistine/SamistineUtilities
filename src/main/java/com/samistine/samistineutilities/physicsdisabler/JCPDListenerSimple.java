@@ -6,7 +6,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 
-public final class JCPDListenerSimple implements Listener {
+class JCPDListenerSimple implements Listener {
 
     @EventHandler
     public void onBlockPhysics(BlockPhysicsEvent event) {

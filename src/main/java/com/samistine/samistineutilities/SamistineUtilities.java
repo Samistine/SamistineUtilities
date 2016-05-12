@@ -26,7 +26,12 @@ public final class SamistineUtilities extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.jc = new JCPhysicsDisabler().withPlugin(this);
+        this.jc = new JCPhysicsDisabler().withPlugin(this).start();
+    }
+
+    @Override
+    public void onDisable() {
+        this.jc.onDisable();
     }
 
 }

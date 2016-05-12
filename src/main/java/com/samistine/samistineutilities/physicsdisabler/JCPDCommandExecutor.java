@@ -5,7 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
-public final class JCPDCommandExecutor implements CommandExecutor {
+final class JCPDCommandExecutor implements CommandExecutor {
 
     private JCPhysicsDisabler plugin;
 
