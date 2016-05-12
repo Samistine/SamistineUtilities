@@ -1,10 +1,13 @@
 package com.samistine.samistineutilities;
 
+import com.samistine.samistineutilities.nosandfall.NoSandFall;
 import com.samistine.samistineutilities.physicsdisabler.JCPhysicsDisabler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * A collection of utilities that are meant to aid in the running of a server.
+ * This is the manager that handles loading, reloading, and disabling the
+ * individual utilities.
  *
  * <table style="border: 1px solid black;">
  * <caption>Features</caption>
@@ -23,15 +26,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class SamistineUtilities extends JavaPlugin {
 
     JCPhysicsDisabler jc;
+    NoSandFall nsf;
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         this.jc = new JCPhysicsDisabler().withPlugin(this).start();
+        this.nsf = new NoSandFall().withPlugin(this).start();
     }
 
     @Override
     public void onDisable() {
         this.jc.onDisable();
+        this.nsf.onDisable();
     }
 
 }

@@ -105,4 +105,9 @@ public final class JCPhysicsDisabler extends Utility {
     public boolean existsRegion(String name) {
         return listener2.existsRegion(name);
     }
+
+    @Override
+    public String getName() {
+        return "PhysicsDisabler";
+    }
 }

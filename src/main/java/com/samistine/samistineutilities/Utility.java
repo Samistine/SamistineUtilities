@@ -1,8 +1,10 @@
 package com.samistine.samistineutilities;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -25,8 +27,29 @@ public abstract class Utility {
         return plugin.getCommand(name);
     }
 
+    public FileConfiguration getRootConfig() {
+        return plugin.getConfig();
+    }
+
+    public abstract String getName();
+
+    private Logger logger;
+
+    public Logger getLogger() {
+        if (logger == null) {
+            this.logger = new UtilityLogger(this);
+        }
+        return logger;
+    }
+
+    /**
+     * Called when the root plugin is enabled
+     */
     public abstract void onEnable();
 
+    /**
+     * Called when the root plugin is disabled
+     */
     public void onDisable() {
     }
 
