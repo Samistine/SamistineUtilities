@@ -35,6 +35,7 @@ final class JCPDCommandExecutor implements CommandExecutor {
                             default:
                                 return false;
                         }
+                        break;
                     case "addregion":
                         JCPDRegion r = null;
                         if (args.length == 3) {
@@ -46,16 +47,14 @@ final class JCPDCommandExecutor implements CommandExecutor {
                             try {
                                 r = new JCPDRegion(plugin.getServer().getWorld(args[2]), Integer.parseInt(v1[0]), Integer.parseInt(v1[1]), Integer.parseInt(v1[2]), Integer.parseInt(v2[0]), Integer.parseInt(v2[1]), Integer.parseInt(v2[2]));
                             } catch (NumberFormatException e) {
-                                sender.sendMessage("Invalid parameters.");
-                                return false;
+                                sender.sendMessage("Invalid parameters. ~~NumberFormatException~~");
+                                return true;
                             }
                         }
                         if (r == null) {
                             sender.sendMessage("World does not exist or invalid parameters.");
-                            return false;
                         } else if (plugin.existsRegion(args[1])) {
-                            sender.sendMessage("Region already exists.");
-                            return false;
+                            sender.sendMessage("A region of the same name already exists.");
                         } else {
                             plugin.addRegion(args[1], r);
                             sender.sendMessage("Region added.");
@@ -65,7 +64,6 @@ final class JCPDCommandExecutor implements CommandExecutor {
                         if (args.length == 2) {
                             if (!plugin.existsRegion(args[1])) {
                                 sender.sendMessage("Region does not exist.");
-                                return false;
                             } else {
                                 plugin.removeRegion(args[1]);
                                 sender.sendMessage("Region removed.");
