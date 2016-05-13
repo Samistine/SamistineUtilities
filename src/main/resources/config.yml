@@ -24,3 +24,17 @@ NoSandFall: {
     ]
 }
 ########################
+
+
+########################
+#######NoRainFall#######
+NoRainFall: {
+    enabled: false,
+    all_worlds: false,
+    worlds: [
+        "world",
+        "world_nether",
+        "world_the_end"
+    ]
+}
+########################

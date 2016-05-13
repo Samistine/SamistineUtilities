@@ -1,5 +1,6 @@
 package com.samistine.samistineutilities;
 
+import com.samistine.samistineutilities.norainfall.NoRainFall;
 import com.samistine.samistineutilities.nosandfall.NoSandFall;
 import com.samistine.samistineutilities.physicsdisabler.JCPhysicsDisabler;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,18 +28,21 @@ public final class SamistineUtilities extends JavaPlugin {
 
     JCPhysicsDisabler jc;
     NoSandFall nsf;
+    NoRainFall nrf;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         this.jc = new JCPhysicsDisabler().withPlugin(this).start();
         this.nsf = new NoSandFall().withPlugin(this).start();
+        this.nrf = new NoRainFall().withPlugin(this).start();
     }
 
     @Override
     public void onDisable() {
         this.jc.onDisable();
         this.nsf.onDisable();
+        this.nrf.onDisable();
     }
 
 }
