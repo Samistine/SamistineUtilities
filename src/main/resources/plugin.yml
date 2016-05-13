@@ -12,5 +12,5 @@ commands:
    disablephysics:
       description: disable physics, add or remove regions
       usage: /disablephysics [ mode [on|off|region] | addregion (regionname) (worldname) [(x)|(y)|(z) (x)|(y)|(z)] | removeregion (regionname) ]
-      permission: JCPD.disablephysics
+      permission: SamistineUtilities.disablephysics
       permission-message: You don't have permission.
