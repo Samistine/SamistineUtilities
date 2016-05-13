@@ -46,7 +46,7 @@ public final class NoRainFall extends Utility implements Reloadable {
     private void loadConfig() {
         this.conf_enabled = getRootConfig().getBoolean("NoRainFall.enabled", false);
         this.conf_all_worlds = getRootConfig().getBoolean("NoRainFall.all_worlds", false);
-        if (!conf_all_worlds) {
+        if (conf_enabled && !conf_all_worlds) {
             this.conf_worlds = new ArrayList<>();
             for (String s : getRootConfig().getStringList("NoRainFall.worlds")) {
                 World w = getServer().getWorld(s);

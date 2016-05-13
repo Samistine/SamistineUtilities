@@ -77,7 +77,7 @@ public final class NoSandFall extends Utility implements Reloadable {
     private void loadConfig() {
         this.conf_enabled = getRootConfig().getBoolean("NoSandFall.enabled", false);
         this.conf_all_worlds = getRootConfig().getBoolean("NoSandFall.all_worlds", false);
-        if (!conf_all_worlds) {
+        if (conf_enabled && !conf_all_worlds) {
             this.conf_worlds = new ArrayList<>();
             for (String s : getRootConfig().getStringList("NoSandFall.worlds")) {
                 World w = getServer().getWorld(s);
