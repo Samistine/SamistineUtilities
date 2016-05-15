@@ -25,17 +25,18 @@ package com.samistine.samistineutilities.norainfall;
 
 import com.samistine.samistineutilities.Reloadable;
 import com.samistine.samistineutilities.Utility;
+import com.samistine.samistineutilities.UtilityInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.World;
-import org.bukkit.event.HandlerList;
 
 /**
  * @author Samuel Seidel
  * @version 1.0
  */
+@UtilityInfo(name = "NoRainFall", desc = "Stops rain in specified worlds")
 public final class NoRainFall extends Utility implements Reloadable {
 
     private NRFListener listener;
@@ -66,7 +67,7 @@ public final class NoRainFall extends Utility implements Reloadable {
             if (listener == null) {
                 //We are enabling, lets setup :)
                 listener = new NRFListener(this);
-                getServer().getPluginManager().registerEvents(listener, getPlugin());
+                registerListener(listener);
             } else {
                 //We are enabled; we don't need to do any work
             }
@@ -76,7 +77,7 @@ public final class NoRainFall extends Utility implements Reloadable {
             //Lets check which one
             if (listener != null) {
                 //We are disabling
-                HandlerList.unregisterAll(listener);
+                unRegisterListener(listener);
                 listener = null;
             } else {
                 //We are disabled
@@ -100,13 +101,8 @@ public final class NoRainFall extends Utility implements Reloadable {
 
     @Override
     public void onDisable() {
-        HandlerList.unregisterAll(listener);
+        unRegisterListener(listener);
         listener = null;
-    }
-
-    @Override
-    public String getName() {
-        return "NoRainFall";
     }
 
 }

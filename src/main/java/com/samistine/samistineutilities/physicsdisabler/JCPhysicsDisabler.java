@@ -24,6 +24,7 @@
 package com.samistine.samistineutilities.physicsdisabler;
 
 import com.samistine.samistineutilities.Utility;
+import com.samistine.samistineutilities.UtilityInfo;
 import org.bukkit.event.HandlerList;
 
 /**
@@ -72,6 +73,7 @@ import org.bukkit.event.HandlerList;
  * @author Jasper Nalbach
  * @version 1.2
  */
+@UtilityInfo(name = "PhysicsDisabler", desc = "Block title entities from ticking in specific/all places", commands = "/disablephysics")
 public final class JCPhysicsDisabler extends Utility {
 
     private final JCPDListenerSimple listener = new JCPDListenerSimple();
@@ -79,18 +81,18 @@ public final class JCPhysicsDisabler extends Utility {
     private final JCPDCommandExecutor command = new JCPDCommandExecutor(this);
 
     @Override
-    public void onEnable() {
-        getCommand("disablephysics").setExecutor(command);
+    protected void registerCommands() {
+        registerCommand("disablephysics", command);
     }
 
     public void setDisabled(int i) {
-        HandlerList.unregisterAll(listener);
-        HandlerList.unregisterAll(listener2);
+        unRegisterListener(listener);
+        unRegisterListener(listener2);
 
         if (i == 1) {
-            getServer().getPluginManager().registerEvents(listener, getPlugin());
+            registerListener(listener);
         } else if (i == 2) {
-            getServer().getPluginManager().registerEvents(listener2, getPlugin());
+            registerListener(listener2);
         }
     }
 
@@ -104,10 +106,5 @@ public final class JCPhysicsDisabler extends Utility {
 
     public boolean existsRegion(String name) {
         return listener2.existsRegion(name);
-    }
-
-    @Override
-    public String getName() {
-        return "PhysicsDisabler";
     }
 }

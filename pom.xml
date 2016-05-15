@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.samistine.mcplugins</groupId>
     <artifactId>SamistineUtilities</artifactId>
-    <version>1.2.1</version>
+    <version>2.0.0</version>
     <build>
         <finalName>SamistineUtilities</finalName>
         <resources>
@@ -40,12 +40,37 @@
                     <hashLength>40</hashLength>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <minimizeJar>false</minimizeJar>
+                            <artifactSet>
+                                <excludes>
+                                    
+                                </excludes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <repositories>
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>Samistine-repo</id>
+            <url>http://ci.samistine.com/plugin/repository/everything/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -55,6 +80,13 @@
             <version>1.8-R0.1-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>indexed-tree-map</groupId>
+            <artifactId>indexed-tree-map</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <properties>

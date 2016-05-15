@@ -25,12 +25,12 @@ package com.samistine.samistineutilities.nosandfall;
 
 import com.samistine.samistineutilities.Reloadable;
 import com.samistine.samistineutilities.Utility;
+import com.samistine.samistineutilities.UtilityInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.World;
-import org.bukkit.event.HandlerList;
 
 /**
  * <h1>NoSandFall</h1>
@@ -67,6 +67,7 @@ import org.bukkit.event.HandlerList;
  * @author Samuel Seidel
  * @version 1.0
  */
+@UtilityInfo(name = "NoSandFall", desc = "Stops falling blocks in specified worlds")
 public final class NoSandFall extends Utility implements Reloadable {
 
     private NoSandFallListener listener;
@@ -97,7 +98,7 @@ public final class NoSandFall extends Utility implements Reloadable {
             if (listener == null) {
                 //We are enabling, lets setup :)
                 listener = new NoSandFallListener(this);
-                getServer().getPluginManager().registerEvents(listener, getPlugin());
+                registerListener(listener);
             } else {
                 //We are enabled; we don't need to do any work
             }
@@ -107,7 +108,7 @@ public final class NoSandFall extends Utility implements Reloadable {
             //Lets check which one
             if (listener != null) {
                 //We are disabling
-                HandlerList.unregisterAll(listener);
+                unRegisterListener(listener);
                 listener = null;
             } else {
                 //We are disabled
@@ -131,12 +132,7 @@ public final class NoSandFall extends Utility implements Reloadable {
 
     @Override
     public void onDisable() {
-        HandlerList.unregisterAll(listener);
+        unRegisterListener(listener);
         listener = null;
-    }
-
-    @Override
-    public String getName() {
-        return "NoSandFall";
     }
 }
