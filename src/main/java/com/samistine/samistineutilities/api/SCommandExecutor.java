@@ -6,7 +6,8 @@ import com.samistine.samistineutilities.SamistineUtilities;
 /**
  * The base class that all command executors should extend. Commands are
  * registered using {@link CommandManager} and defined using the
- * {@link CommandHandler} annotations.
+ * {@link com.samistine.samistineutilities.utils.annotations.command.Command}
+ * annotations.
  *
  * @author Jacek Kuzemczak
  *
@@ -15,7 +16,7 @@ public interface SCommandExecutor {
 
     /**
      *
-     * @param <T>
+     * @param <T> this
      * @param feature the feature to register this listener to
      * @return this for easy chaining
      */
@@ -27,7 +28,7 @@ public interface SCommandExecutor {
 
     /**
      *
-     * @param <T>
+     * @param <T> this
      * @param feature the feature that owns this listener
      * @return this for easy chaining
      */

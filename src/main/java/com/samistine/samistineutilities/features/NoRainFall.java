@@ -62,9 +62,6 @@ import java.util.Iterator;
  * This utility can be enabled/disabled in the main configuration file. There
  * are also multiple options to choose from, see below.</p>
  * <hr>
- * <pre>
- *
- * </pre>
  * </blockquote>
  * </div>
  *

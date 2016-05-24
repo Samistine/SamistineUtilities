@@ -35,7 +35,7 @@ public interface SListener extends Listener {
 
     /**
      *
-     * @param <T>
+     * @param <T> this
      * @param feature the feature to register this listener to
      * @return this for easy chaining
      */
@@ -47,7 +47,7 @@ public interface SListener extends Listener {
 
     /**
      *
-     * @param <T>
+     * @param <T> this
      * @param feature the feature that owns this listener
      * @return this for easy chaining
      */

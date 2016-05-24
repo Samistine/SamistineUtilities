@@ -22,7 +22,7 @@ public class TimeUtils {
     /**
      * Converts time (in milliseconds) to human-readable format
      * <br>
-     * <pre><w> days, <x> hours, <y> minutes and (z) seconds"</pre>
+     * <pre>[w] days, [x] hours, [y] minutes and (z) seconds"</pre>
      *
      * @param duration
      * @return time of @duration in a nice readable format
