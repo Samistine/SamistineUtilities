@@ -21,31 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.samistine.samistineutilities.norainfall;
+package com.samistine.samistineutilities.utils.annotations.config;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.weather.WeatherChangeEvent;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * The listener used by {@link NoRainFall} for blocking weather changes.
+ * Use {@link ConfigPathProcessor} to process these annotations.
  *
  * @author Samuel Seidel
  */
-final class NRFListener implements Listener {
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ConfigPath {
 
-    private final NoRainFall nrf;
+    String path();
 
-    public NRFListener(NoRainFall nrf) {
-        this.nrf = nrf;
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onRainStart(WeatherChangeEvent event) {
-        if (event.toWeatherState()
-                && (nrf.conf_all_worlds || nrf.conf_worlds.contains(event.getWorld().getName()))) {
-            event.setCancelled(true);
-        }
-    }
 }

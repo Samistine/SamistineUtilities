@@ -1,52 +1,69 @@
+/*
+ * The MIT License
+ *
+ * Copyright 2016 Samuel Seidel.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package com.samistine.samistineutilities;
 
-import com.samistine.samistineutilities.norainfall.NoRainFall;
-import com.samistine.samistineutilities.nosandfall.NoSandFall;
-import com.samistine.samistineutilities.physicsdisabler.JCPhysicsDisabler;
-import com.samistine.samistineutilities.unpackagerized.FindTiles;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * A collection of utilities that are meant to aid in the running of a server.
- * This is the manager that handles loading, reloading, and disabling the
- * individual utilities.
- *
- * <table style="border: 1px solid black;">
- * <caption>Features</caption>
- * <tr>
- * <th>Feature</th>
- * <th>Original Plugin/Source</th>
- * </tr>
- * <tr>
- * <td>{@link JCPhysicsDisabler}</td>
- * <td><a href="https://github.com/derjasper/PhysicsDisabler/">JCPhysicsDisabler</a></td>
- * </tr>
- * </table>
  *
  * @author Samuel Seidel
  */
 public final class SamistineUtilities extends JavaPlugin {
 
-    JCPhysicsDisabler jc;
-    NoSandFall nsf;
-    NoRainFall nrf;
-    FindTiles ft;
+    private final ListenerManager handlerManager = new ListenerManager(this);
+    private final CommandManager commandManager = new CommandManager(this);
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        this.jc = new JCPhysicsDisabler().start();
-        this.nsf = new NoSandFall().start();
-        this.nrf = new NoRainFall().start();
-        this.ft = new FindTiles().start();
+        for (Features feature : Features.values()) {
+            getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[SamistineUtilities]" + ChatColor.GRAY + " Loading " + feature.getName());
+            SFeatureWrapper wrapper = feature.getFeatureWrapper();
+            wrapper.enable();
+        }
     }
 
     @Override
     public void onDisable() {
-        this.jc.stop();
-        this.nsf.stop();
-        this.nrf.stop();
-        this.ft.stop();
+        for (Features feature : Features.values()) {
+            getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[SamistineUtilities]" + ChatColor.GRAY + " Disabling " + feature.getName());
+            SFeatureWrapper wrapper = feature.getFeatureWrapper();
+            wrapper.disable();
+        }
+    }
+
+    public ListenerManager getHandlerManager() {
+        return handlerManager;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public static SamistineUtilities getInstance() {
+        return getPlugin(SamistineUtilities.class);
     }
 
 }

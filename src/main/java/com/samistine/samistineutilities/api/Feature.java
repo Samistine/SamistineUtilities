@@ -21,43 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.samistine.samistineutilities;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.samistine.samistineutilities.api;
 
 /**
  *
  * @author Samuel Seidel
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface UtilityInfo {
+public interface Feature {
 
     /**
-     * The name of this utility
+     * The name of this feature
      *
      * @return name
      */
-    public String name();
+    public String getName();
 
     /**
-     * A short one-to-two liner description about this utility
+     * A short one-to-two liner description about this feature
      *
      * @return description
      */
-    public String desc();
+    public String getDesc();
 
-    /**
-     * Gets the commands this method can handle
-     * <p>
-     * Please specify commands here in your implementation. The {@link Utility}
-     * super class, which your feature should extend, will handle registering
-     * and unregistering commands automatically.</p>
-     *
-     * @return commands used by this utility
-     */
-    public String[] commands() default {};
 }

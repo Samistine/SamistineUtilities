@@ -1,5 +1,6 @@
-package com.samistine.samistineutilities;
+package com.samistine.samistineutilities.api.objects;
 
+import com.samistine.samistineutilities.api.SFeature;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -11,7 +12,7 @@ import java.util.logging.Logger;
  *
  * @see Logger
  */
-public final class UtilityLogger extends Logger {
+public final class FeatureLogger extends Logger {
 
     private String featureName;
 
@@ -20,7 +21,7 @@ public final class UtilityLogger extends Logger {
      *
      * @param context A reference to the plugin
      */
-    public UtilityLogger(Utility context) {
+    public FeatureLogger(SFeature context) {
         super(context.getClass().getCanonicalName(), null);
         String pluginName = context.getPlugin().getName();
         String pluginPrefix = context.getPlugin().getDescription().getPrefix();

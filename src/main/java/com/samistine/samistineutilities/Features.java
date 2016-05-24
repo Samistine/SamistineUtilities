@@ -23,22 +23,36 @@
  */
 package com.samistine.samistineutilities;
 
+import com.samistine.samistineutilities.api.SFeature;
+import com.samistine.samistineutilities.features.FindTiles;
+import com.samistine.samistineutilities.features.NoRainFall;
+import com.samistine.samistineutilities.features.NoSandFall;
+import com.samistine.samistineutilities.features.physicsdisabler.JCPhysicsDisabler;
+
 /**
- * A utility that can be reloaded.
- * <br>
- * Utilities that have settings in configuration files should implement this.
  *
  * @author Samuel Seidel
  */
-public interface Reloadable {
+public enum Features {
+    NoSandFall("NoSandFall", NoSandFall.class),
+    NoRainFall("NoRainFall", NoRainFall.class),
+    FindTiles("FindTiles", FindTiles.class),
+    DisablePhysics("DisablePhysics", JCPhysicsDisabler.class);
 
-    /**
-     * Reload the utility.
-     * <br>
-     * It is safe to put all your startup logic here if it makes sense to do so.
-     * It is to be assumed that the root configuration has already been reloaded
-     * when this is called outside the utility.
-     */
-    public void onReload();
+    private final String name;
+    private final SFeatureWrapper featureWrapper;
+
+    private Features(String name, Class<? extends SFeature> clazz) {
+        this.name = name;
+        this.featureWrapper = new SFeatureWrapper<>(clazz);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public SFeatureWrapper getFeatureWrapper() {
+        return featureWrapper;
+    }
 
 }

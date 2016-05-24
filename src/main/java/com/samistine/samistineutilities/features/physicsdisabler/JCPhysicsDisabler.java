@@ -21,11 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.samistine.samistineutilities.physicsdisabler;
+package com.samistine.samistineutilities.features.physicsdisabler;
 
-import com.samistine.samistineutilities.Utility;
-import com.samistine.samistineutilities.UtilityInfo;
-import org.bukkit.event.HandlerList;
+import com.samistine.samistineutilities.api.SFeature;
+import com.samistine.samistineutilities.api.objects.FeatureInfo;
 
 /**
  * <h1>PhysicsDisabler</h1>
@@ -73,26 +72,25 @@ import org.bukkit.event.HandlerList;
  * @author Jasper Nalbach
  * @version 1.2
  */
-@UtilityInfo(name = "PhysicsDisabler", desc = "Block title entities from ticking in specific/all places", commands = "/disablephysics")
-public final class JCPhysicsDisabler extends Utility {
+@FeatureInfo(name = "PhysicsDisabler", desc = "Block title entities from ticking in specific/all places", commands = "/disablephysics")
+public final class JCPhysicsDisabler extends SFeature {
 
     private final JCPDListenerSimple listener = new JCPDListenerSimple();
     private final JCPDListenerRegions listener2 = new JCPDListenerRegions();
-    private final JCPDCommandExecutor command = new JCPDCommandExecutor(this);
 
-    @Override
-    protected void registerCommands() {
-        registerCommand("disablephysics", command);
+    public JCPhysicsDisabler() {
+        //Register Command
+        new JCPDCommandExecutor(this).registerCommand(this);
     }
 
     public void setDisabled(int i) {
-        unRegisterListener(listener);
-        unRegisterListener(listener2);
+        listener.unRegisterListener(this);
+        listener2.unRegisterListener(this);
 
         if (i == 1) {
-            registerListener(listener);
+            listener.registerListener(this);
         } else if (i == 2) {
-            registerListener(listener2);
+            listener2.registerListener(this);
         }
     }
 

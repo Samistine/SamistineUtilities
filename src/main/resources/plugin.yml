@@ -9,13 +9,13 @@ author: Samuel Seidel + Others
 main: com.samistine.samistineutilities.SamistineUtilities
 description: A collection of utilities that are meant to aid in the running of a server.
 commands:
-   disablephysics:
-      description: disable physics, add or remove regions
-      usage: /disablephysics [ mode [on|off|region] | addregion (regionname) (worldname) [(x)|(y)|(z) (x)|(y)|(z)] | removeregion (regionname) ]
-      permission: SamistineUtilities.disablephysics
-      permission-message: You don't have permission.
-   findtiles:
-      description: Find chunks that may contain too many tile entities
-      usage: /findtiles
-      permission: SamistineUtilities.findtiles
-      permission-message: You don't have permission.
+#   disablephysics:
+#      description: disable physics, add or remove regions
+#      usage: /disablephysics [ mode [on|off|region] | addregion (regionname) (worldname) [(x)|(y)|(z) (x)|(y)|(z)] | removeregion (regionname) ]
+#      permission: SamistineUtilities.disablephysics
+#      permission-message: You don't have permission.
+#   findtiles:
+#      description: Find chunks that may contain too many tile entities
+#      usage: /findtiles
+#      permission: SamistineUtilities.findtiles
+#      permission-message: You don't have permission.

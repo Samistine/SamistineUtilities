@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Samuel Seidel.
+ * Copyright 2016 Samuel.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.samistine.samistineutilities.nosandfall;
+package com.samistine.samistineutilities.api;
 
-import org.bukkit.entity.EntityType;
-import org.bukkit.event.EventHandler;
+import com.samistine.samistineutilities.ListenerManager;
+import com.samistine.samistineutilities.SamistineUtilities;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
 
 /**
- * The listener used by {@link NoSandFall} for blocking falling blocks.
  *
- * @author Samuel Seidel
+ * @author Samuel
  */
-class NoSandFallListener implements Listener {
+public interface SListener extends Listener {
 
-    private final NoSandFall nsf;
-
-    public NoSandFallListener(NoSandFall nsf) {
-        this.nsf = nsf;
+    /**
+     *
+     * @param <T>
+     * @param feature the feature to register this listener to
+     * @return this for easy chaining
+     */
+    public default <T extends SListener> T registerListener(Feature feature) {
+        ListenerManager manager = SamistineUtilities.getInstance().getHandlerManager();
+        manager.registerListener(feature, this);
+        return (T) this;
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onFall(EntityChangeBlockEvent event) {
-        if (event.getEntityType() == EntityType.FALLING_BLOCK
-                && (nsf.conf_all_worlds || nsf.conf_worlds.contains(event.getBlock().getWorld().getName()))) {
-            event.setCancelled(true);
-        }
+    /**
+     *
+     * @param <T>
+     * @param feature the feature that owns this listener
+     * @return this for easy chaining
+     */
+    public default <T extends SListener> T unRegisterListener(Feature feature) {
+        ListenerManager manager = SamistineUtilities.getInstance().getHandlerManager();
+        manager.unRegisterListener(feature, this);
+        return (T) this;
     }
+
 }

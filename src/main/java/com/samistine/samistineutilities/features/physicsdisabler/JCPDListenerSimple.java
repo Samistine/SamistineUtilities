@@ -1,12 +1,12 @@
-package com.samistine.samistineutilities.physicsdisabler;
+package com.samistine.samistineutilities.features.physicsdisabler;
 
+import com.samistine.samistineutilities.api.SListener;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 
-class JCPDListenerSimple implements Listener {
+class JCPDListenerSimple implements SListener {
 
     @EventHandler
     public void onBlockPhysics(BlockPhysicsEvent event) {

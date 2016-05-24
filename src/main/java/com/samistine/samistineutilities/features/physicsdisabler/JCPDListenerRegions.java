@@ -1,15 +1,15 @@
-package com.samistine.samistineutilities.physicsdisabler;
+package com.samistine.samistineutilities.features.physicsdisabler;
 
+import com.samistine.samistineutilities.api.SListener;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 
-final class JCPDListenerRegions implements Listener {
+final class JCPDListenerRegions implements SListener {
 
     private HashMap<String, JCPDRegion> regions = new HashMap<>();
 

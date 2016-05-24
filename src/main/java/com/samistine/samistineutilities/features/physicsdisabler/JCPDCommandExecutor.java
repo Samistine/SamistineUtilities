@@ -1,10 +1,11 @@
-package com.samistine.samistineutilities.physicsdisabler;
+package com.samistine.samistineutilities.features.physicsdisabler;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import com.samistine.samistineutilities.api.SCommandExecutor;
+import com.samistine.samistineutilities.utils.annotations.command.Command;
+
 import org.bukkit.command.CommandSender;
 
-final class JCPDCommandExecutor implements CommandExecutor {
+final class JCPDCommandExecutor implements SCommandExecutor {
 
     private JCPhysicsDisabler plugin;
 
@@ -12,8 +13,8 @@ final class JCPDCommandExecutor implements CommandExecutor {
         this.plugin = plugin;
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    @Command(names = "disablephysics", description = "Disable physics in all or specific areas", usage = "[ mode [on|off|region] | addregion (regionname) (worldname) [(x)|(y)|(z) (x)|(y)|(z)] | removeregion (regionname) ]")
+    public void onCommand(CommandSender sender, String label, String[] args) {
         if (args.length >= 2) {
             switch (args[0]) {
                 case "mode":
@@ -21,17 +22,15 @@ final class JCPDCommandExecutor implements CommandExecutor {
                         case "on":
                             plugin.setDisabled(1);
                             sender.sendMessage("Block updates are disabled.");
-                            break;
+                            return;
                         case "region":
                             plugin.setDisabled(2);
                             sender.sendMessage("Block updates will be disabled in all selected regions.");
-                            break;
+                            return;
                         case "off":
                             plugin.setDisabled(0);
                             sender.sendMessage("Everything is turned on.");
-                            break;
-                        default:
-                            return false;
+                            return;
                     }
                     break;
                 case "addregion":
@@ -46,7 +45,7 @@ final class JCPDCommandExecutor implements CommandExecutor {
                             r = new JCPDRegion(plugin.getServer().getWorld(args[2]), Integer.parseInt(v1[0]), Integer.parseInt(v1[1]), Integer.parseInt(v1[2]), Integer.parseInt(v2[0]), Integer.parseInt(v2[1]), Integer.parseInt(v2[2]));
                         } catch (NumberFormatException e) {
                             sender.sendMessage("Invalid parameters. ~~NumberFormatException~~");
-                            return true;
+                            return;
                         }
                     }
                     if (r == null) {
@@ -57,7 +56,7 @@ final class JCPDCommandExecutor implements CommandExecutor {
                         plugin.addRegion(args[1], r);
                         sender.sendMessage("Region added.");
                     }
-                    break;
+                    return;
                 case "removeregion":
                     if (args.length == 2) {
                         if (!plugin.existsRegion(args[1])) {
@@ -66,17 +65,10 @@ final class JCPDCommandExecutor implements CommandExecutor {
                             plugin.removeRegion(args[1]);
                             sender.sendMessage("Region removed.");
                         }
-                    } else {
-                        return false;
                     }
-                    break;
-                default:
-                    return false;
+                    return;
             }
-        } else {
-            return false;
         }
-
-        return true;
+        sender.sendMessage("/disablephysics [ mode [on|off|region] | addregion (regionname) (worldname) [(x)|(y)|(z) (x)|(y)|(z)] | removeregion (regionname) ]");
     }
 }

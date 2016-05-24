@@ -1,4 +1,4 @@
-package com.samistine.samistineutilities.physicsdisabler;
+package com.samistine.samistineutilities.features.physicsdisabler;
 
 import org.bukkit.Location;
 import org.bukkit.World;
