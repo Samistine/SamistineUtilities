@@ -24,6 +24,8 @@
 package com.samistine.samistineutilities;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -32,11 +34,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class SamistineUtilities extends JavaPlugin {
 
-    private final ListenerManager handlerManager = new ListenerManager(this);
-    private final CommandManager commandManager = new CommandManager(this);
-
     @Override
     public void onEnable() {
+        getCommand("utils").setExecutor(this);
         saveDefaultConfig();
         for (Features feature : Features.values()) {
             getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[SamistineUtilities]" + ChatColor.GRAY + " Loading " + feature.getName());
@@ -54,16 +54,23 @@ public final class SamistineUtilities extends JavaPlugin {
         }
     }
 
-    public ListenerManager getHandlerManager() {
-        return handlerManager;
-    }
-
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
-
     public static SamistineUtilities getInstance() {
         return getPlugin(SamistineUtilities.class);
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length > 0) {
+            switch (args[0].toLowerCase()) {
+                case "enable":
+                    onEnable();
+                    break;
+                case "disable":
+                    onDisable();
+                    break;
+            }
+        }
+        return true;
     }
 
 }

@@ -84,8 +84,8 @@ public final class JCPhysicsDisabler extends SFeature {
     }
 
     public void setDisabled(int i) {
-        listener.unRegisterListener(this);
-        listener2.unRegisterListener(this);
+        listener.unregisterListener(this);
+        listener2.unregisterListener(this);
 
         if (i == 1) {
             listener.registerListener(this);

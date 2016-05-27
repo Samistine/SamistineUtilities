@@ -23,8 +23,8 @@ public final class FeatureLogger extends Logger {
      */
     public FeatureLogger(SFeature context) {
         super(context.getClass().getCanonicalName(), null);
-        String pluginName = context.getPlugin().getName();
-        String pluginPrefix = context.getPlugin().getDescription().getPrefix();
+        String pluginName = context.getRootPlugin().getName();
+        String pluginPrefix = context.getRootPlugin().getDescription().getPrefix();
 
         featureName = new StringBuilder().append("[")
                 .append(
@@ -33,7 +33,7 @@ public final class FeatureLogger extends Logger {
                 )
                 .append("] ").toString();
 
-        setParent(context.getPlugin().getLogger());
+        setParent(context.getRootPlugin().getLogger());
         setLevel(Level.ALL);
     }
 

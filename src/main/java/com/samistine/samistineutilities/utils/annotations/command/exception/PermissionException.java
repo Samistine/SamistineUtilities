@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Samuel.
+ * Copyright 2016 Samuel Seidel.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,38 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.samistine.samistineutilities.api;
-
-import org.bukkit.event.Listener;
+package com.samistine.samistineutilities.utils.annotations.command.exception;
 
 /**
+ * Thrown when executing a command if the command-sender does not have
+ * sufficient privileges for the command.
  *
- * @author Samuel
+ * @author Samuel Seidel
  */
-public interface SListener extends Listener {
+public class PermissionException extends CommandException {
 
     /**
-     * Register this instance to the server's event handling backend.
-     *
-     * @param <T> this
-     * @param feature the feature to register this listener to
-     * @return this for easy chaining
+     * The permissions required to execute the command
      */
-    public default <T extends SListener> T registerListener(SFeature feature) {
-        feature.registerListener(this);
-        return (T) this;
+    private final String permission;
+
+    /**
+     * Create a new instance of {@link PermissionException}
+     *
+     * @param permission permission that was needed to execute the command
+     * without throwing this exception
+     */
+    public PermissionException(String permission) {
+        super("Permission {" + permission + "} is required to execute this command");
+        this.permission = permission;
     }
 
     /**
-     * Un-register this instance from the server's event handling backend.
+     * Get the permission needed to execute the command
      *
-     * @param <T> this
-     * @param feature the feature that owns this listener
-     * @return this for easy chaining
+     * @return permission
      */
-    public default <T extends SListener> T unregisterListener(SFeature feature) {
-        feature.unregisterListener(this);
-        return (T) this;
+    public String getPermission() {
+        return permission;
     }
 
 }

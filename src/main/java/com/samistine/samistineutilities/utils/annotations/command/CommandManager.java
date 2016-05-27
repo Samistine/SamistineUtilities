@@ -1,6 +1,7 @@
 package com.samistine.samistineutilities.utils.annotations.command;
 
 import com.samistine.samistineutilities.api.SCommandExecutor;
+import com.samistine.samistineutilities.utils.BukkitUtils;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -11,12 +12,14 @@ import org.bukkit.plugin.SimplePluginManager;
 
 import com.samistine.samistineutilities.utils.ReflectionUtils;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Used to manage the commands for this plugin.
  *
  * @author Jacek Kuzemczak
+ * @author Samuel Seidel
  */
 public final class CommandManager {
 
@@ -40,27 +43,6 @@ public final class CommandManager {
 
     private boolean registerCommand(PluginCommand command) {
         return this.commandMap.register(plugin.getDescription().getName(), command);
-    }
-
-    private void unRegisterCommand(PluginCommand cmd) {
-        try {
-            Map<String, Command> knownCommands = ReflectionUtils.getFieldValue(commandMap.getClass(), "knownCommands", Map.class, commandMap);
-
-            knownCommands.remove(cmd.getName());
-            for (String alias : cmd.getAliases()) {
-                if (knownCommands.containsKey(alias) && knownCommands.get(alias).toString().contains(cmd.getName())) {
-                    knownCommands.remove(alias);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    //TODO: Add error handling
-    public void unRegisterCommandExecutor(SCommandExecutor executor) {
-        PluginCommand pluginCommand = mappings.get(executor);
-        unRegisterCommand(pluginCommand);
     }
 
     /**
@@ -87,6 +69,8 @@ public final class CommandManager {
 
                     if (!this.registerCommand(command)) {
                         throw new CommandRegistrationException("Failed to register command for method " + method.getName() + " in " + cls.getName());
+                    } else {
+                        mappings.put(executor, command);
                     }
                 }
             }
@@ -112,6 +96,30 @@ public final class CommandManager {
                 }
             }
         }
+    }
+
+    private void unRegisterCommand(PluginCommand cmd) {
+        try {
+            Map<String, org.bukkit.command.Command> knownCommands = ReflectionUtils.getFieldValue(commandMap.getClass(), "knownCommands", Map.class, commandMap);
+            knownCommands.remove(cmd.getName()).unregister(commandMap);
+
+            //Removes other references to the command, such as "pluginname:command"
+            for (Iterator<Map.Entry<String, org.bukkit.command.Command>> it = knownCommands.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<String, org.bukkit.command.Command> entry = it.next();
+                if (entry.getValue() == cmd) {
+                    it.remove();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        BukkitUtils.unregisterHelpTopic(cmd);
+    }
+
+    //TODO: Add error handling
+    public void unRegisterCommandExecutor(SCommandExecutor executor) {
+        PluginCommand pluginCommand = mappings.get(executor);
+        unRegisterCommand(pluginCommand);
     }
 
 }

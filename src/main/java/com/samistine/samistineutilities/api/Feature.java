@@ -23,6 +23,11 @@
  */
 package com.samistine.samistineutilities.api;
 
+import com.samistine.samistineutilities.SamistineUtilities;
+import java.util.logging.Logger;
+import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
+
 /**
  *
  * @author Samuel Seidel
@@ -42,5 +47,36 @@ public interface Feature {
      * @return description
      */
     public String getDesc();
+
+    /**
+     * Gets the logger for the feature.
+     * <p>
+     * This logger contains the features {@link #getName() name} to assist in
+     * debugging.
+     *
+     * @return logger
+     */
+    public Logger getLogger();
+
+    /**
+     * Gets the running minecraft(bukkit) server.
+     *
+     * @return server
+     */
+    public Server getServer();
+
+    /**
+     * Get the plugin that this feature is running under
+     *
+     * @return plugin
+     */
+    public SamistineUtilities getRootPlugin();
+
+    /**
+     * Gets the {@link SamistineUtilities plugin}'s root/main config.
+     *
+     * @return config
+     */
+    public FileConfiguration getRootConfig();
 
 }

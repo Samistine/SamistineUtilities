@@ -26,10 +26,14 @@ package com.samistine.samistineutilities.api;
 import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.api.objects.FeatureLogger;
 import com.samistine.samistineutilities.SamistineUtilities;
+import com.samistine.samistineutilities.utils.annotations.command.CommandManager;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.HandlerList;
 
 /**
  *
@@ -59,28 +63,98 @@ public abstract class SFeature implements Feature {
         return desc;
     }
 
+    @Override
     public final Logger getLogger() {
         return logger;
     }
 
-    /**
-     * Called when the feature is being disabled.
-     * <br>
-     * All listeners will be automatically deRegistered after this method call
-     */
-    public void onDisable() {
+    @Override
+    public final Server getServer() {
+        return getRootPlugin().getServer();
     }
 
-    public final SamistineUtilities getPlugin() {
+    @Override
+    public final SamistineUtilities getRootPlugin() {
         return SamistineUtilities.getInstance();
     }
 
-    public final Server getServer() {
-        return getPlugin().getServer();
+    @Override
+    public final FileConfiguration getRootConfig() {
+        return getRootPlugin().getConfig();
     }
 
-    public final FileConfiguration getRootConfig() {
-        return getPlugin().getConfig();
+    /**
+     * This method can only be called a single time.
+     */
+    public final void disable() {
+        onDisable();
+        listeners.forEach(HandlerList::unregisterAll);
+        listeners.clear();
+        commands.forEach(getCommandManager()::unRegisterCommandExecutor);
+        commands.clear();
+    }
+
+    /**
+     * Called when the feature is being disabled, but before anything else takes
+     * place.
+     * <br>
+     */
+    protected void onDisable() {
+    }
+
+    //
+    //
+    //
+    //Begin Event/Command Methods & Fields
+    //
+    //
+    //
+    private final List<SListener> listeners = new ArrayList<>();
+    private final List<SCommandExecutor> commands = new ArrayList<>();
+
+    protected final void registerListener(SListener listener) {
+        if (!listeners.contains(listener)) {
+            getServer().getPluginManager().registerEvents(listener, getRootPlugin());
+            listeners.add(listener);
+        } else {
+            //The listener was already registed
+        }
+    }
+
+    protected final void unregisterListener(SListener listener) {
+        if (listeners.contains(listener)) {
+            HandlerList.unregisterAll(listener);
+            listeners.remove(listener);
+        } else {
+            //The listener was not registered
+        }
+    }
+
+    protected void registerCommand(SCommandExecutor command) {
+        if (!commands.contains(command)) {
+            getCommandManager().registerCommandExecutor(command);
+            commands.add(command);
+        } else {
+            //The listener has already been registered by this feature
+        }
+    }
+
+    protected void unregisterCommand(SCommandExecutor command) {
+        if (commands.contains(command)) {
+            getCommandManager().unRegisterCommandExecutor(command);
+            commands.remove(command);
+        } else {
+            //The listener is not registered
+        }
+    }
+
+    private CommandManager cm;
+
+    private CommandManager getCommandManager() {
+        if (cm == null) {
+            cm = new com.samistine.samistineutilities.utils.annotations.command.CommandManager(getRootPlugin());
+        }
+        return cm;
     }
 
 }

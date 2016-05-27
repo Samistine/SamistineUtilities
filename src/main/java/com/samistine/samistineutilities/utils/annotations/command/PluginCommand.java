@@ -1,6 +1,9 @@
 package com.samistine.samistineutilities.utils.annotations.command;
 
 import com.samistine.samistineutilities.api.SCommandExecutor;
+import com.samistine.samistineutilities.utils.annotations.command.exception.CommandException;
+import com.samistine.samistineutilities.utils.annotations.command.exception.IllegalSenderException;
+import com.samistine.samistineutilities.utils.annotations.command.exception.PermissionException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -51,24 +54,30 @@ class PluginCommand extends Command implements PluginIdentifiableCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         try {
-            Method handlerMethod = null;
-            SCommandExecutor handler = null;
+            Method handlerMethod_;
+            SCommandExecutor handler_;
             
             if (args.length > 0 && this.subCommands.containsKey(args[0])) {
-                handlerMethod = this.subCommands.get(args[0]).handlerMethod;
-                handler = this.subCommands.get(args[0]).handler;
+                handlerMethod_ = this.subCommands.get(args[0]).handlerMethod;
+                handler_ = this.subCommands.get(args[0]).handler;
                 
                 String[] subArgs = new String[args.length - 1];
                 System.arraycopy(args, 1, subArgs, 0, subArgs.length);
                 
                 args = subArgs;
             } else {
-                handlerMethod = this.handlerMethod;
-                handler = this.handler;
+                handlerMethod_ = this.handlerMethod;
+                handler_ = this.handler;
             }
             
-            handlerMethod.setAccessible(true);
-            handlerMethod.invoke(handler, sender, label, args);
+            handlerMethod_.setAccessible(true);
+            handlerMethod_.invoke(handler_, sender, label, args);
+        } catch (CommandException ex) {
+            if (ex instanceof PermissionException) {
+                sender.sendMessage("");
+            } else if (ex instanceof IllegalSenderException) {
+                
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,31 +87,31 @@ class PluginCommand extends Command implements PluginIdentifiableCommand {
     
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-        Method handlerMethod = null;
-        SCommandExecutor handler = null;
-        String[] tabCompletion = null;
+        Method handlerMethod_;
+        SCommandExecutor handler_;
+        String[] tabCompletion_;
         
         if (args.length > 1 && this.subCommands.containsKey(args[0])) {
-            handlerMethod = this.subCommands.get(args[0]).handlerMethod;
-            handler = this.subCommands.get(args[0]).handler;
-            tabCompletion = this.subCommands.get(args[0]).tabCompletion;
+            handlerMethod_ = this.subCommands.get(args[0]).handlerMethod;
+            handler_ = this.subCommands.get(args[0]).handler;
+            tabCompletion_ = this.subCommands.get(args[0]).tabCompletion;
             
             String[] subArgs = new String[args.length - 1];
             System.arraycopy(args, 1, subArgs, 0, subArgs.length);
             
             args = subArgs;
         } else {
-            handlerMethod = this.handlerMethod;
-            handler = this.handler;
-            tabCompletion = this.tabCompletion;
+            handlerMethod_ = this.handlerMethod;
+            handler_ = this.handler;
+            tabCompletion_ = this.tabCompletion;
         }
         
         ArrayList<String> completions = new ArrayList<>();
         
         boolean empty = args[args.length - 1].isEmpty();
         
-        if (args.length <= tabCompletion.length) {
-            String tab = tabCompletion[args.length - 1];
+        if (args.length <= tabCompletion_.length) {
+            String tab = tabCompletion_[args.length - 1];
             String last = args[args.length - 1].toLowerCase();
             
             if (tab.equalsIgnoreCase("<online_player>")) {
@@ -125,10 +134,10 @@ class PluginCommand extends Command implements PluginIdentifiableCommand {
                 }
             } else if (tab.startsWith("[") && tab.endsWith("]")) {
                 try {
-                    Method tabHandler = handlerMethod.getDeclaringClass().getMethod(tab.substring(1, tab.length() - 1), CommandSender.class, String[].class);
+                    Method tabHandler = handlerMethod_.getDeclaringClass().getMethod(tab.substring(1, tab.length() - 1), CommandSender.class, String[].class);
                     
                     if (tabHandler.getReturnType().equals(List.class)) {
-                        for (String value : (List<String>) tabHandler.invoke(handler, sender, args)) {
+                        for (String value : (List<String>) tabHandler.invoke(handler_, sender, args)) {
                             String testValue = value.toLowerCase();
                             
                             if (empty || testValue.startsWith(last)) {

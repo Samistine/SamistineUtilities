@@ -38,8 +38,6 @@ import java.util.logging.Logger;
 public final class SFeatureWrapper<T extends SFeature> {
 
     private static final Logger logger = SamistineUtilities.getInstance().getLogger();
-    private final ListenerManager listenerManager = SamistineUtilities.getInstance().getHandlerManager();
-    private final CommandManager commandManager = SamistineUtilities.getInstance().getCommandManager();
 
     private final Class<T> clazz;
     private final FeatureInfo featureInfo;
@@ -50,6 +48,10 @@ public final class SFeatureWrapper<T extends SFeature> {
     }
 
     private T feature;
+
+    public T getFeature() {
+        return feature;
+    }
 
     public void enable() {
         try {
@@ -68,16 +70,10 @@ public final class SFeatureWrapper<T extends SFeature> {
     public void disable() {
         if (feature != null) {
             try {
-                feature.onDisable();
+                feature.disable();
             } catch (RuntimeException ex) {
                 logger.log(Level.SEVERE, "An exception was thrown while attempting to disable " + featureInfo.name(), ex);
             }
-
-            //Disable Listeners
-            listenerManager.getListenersForFeature(feature).forEach(listener -> listener.unRegisterListener(feature));
-
-            //Disable Commands
-            commandManager.getCommandsForFeature(feature).forEach(command -> command.unRegisterCommand(feature));
 
             //Remove references
             feature = null;

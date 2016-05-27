@@ -24,4 +24,11 @@ public @interface SubCommand {
      */
     String name();
 
+    /**
+     * An empty string means that no permission is required for this command
+     *
+     * @return	permission required to execute this command.
+     */
+    String permission() default "";
+
 }
