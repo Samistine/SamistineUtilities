@@ -27,7 +27,6 @@ NoSandFall: {
 }
 ########################
 
-
 ########################
 #######NoRainFall#######
 NoRainFall: {
@@ -49,7 +48,7 @@ FindTiles: {
 ########################
 
 ########################
-#######PhysicsDisabler#######
+####PhysicsDisabler####
 PhysicsDisabler: {
     enabled: true
 }
