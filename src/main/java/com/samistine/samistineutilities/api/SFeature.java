@@ -27,6 +27,7 @@ import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.api.objects.FeatureLogger;
 import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.utils.annotations.command.backend.CommandManager;
+import com.samistine.samistineutilities.utils.annotations.config.ConfigPathProcessor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,11 +43,11 @@ import org.bukkit.event.HandlerList;
  * @author Samuel Seidel
  */
 public abstract class SFeature implements Feature {
-    
+
     private final String name;
     private final String desc;
     private final Logger logger;
-    
+
     {
         FeatureInfo annotation = getClass().getAnnotation(FeatureInfo.class);
         Validate.notNull(annotation, "Implementing class must contain FeatureInfo anotation");
@@ -54,32 +55,32 @@ public abstract class SFeature implements Feature {
         this.desc = annotation.desc();
         this.logger = new FeatureLogger(this);
     }
-    
+
     @Override
     public final String getName() {
         return name;
     }
-    
+
     @Override
     public final String getDesc() {
         return desc;
     }
-    
+
     @Override
     public final Logger getLogger() {
         return logger;
     }
-    
+
     @Override
     public final Server getServer() {
         return getRootPlugin().getServer();
     }
-    
+
     @Override
     public final SamistineUtilities getRootPlugin() {
         return SamistineUtilities.getInstance();
     }
-    
+
     @Override
     public final FileConfiguration getRootConfig() {
         return getRootPlugin().getConfig();
@@ -95,7 +96,7 @@ public abstract class SFeature implements Feature {
         Validate.notNull(section);
         return section;
     }
-    
+
     public final void enable() {
         logger.log(Level.FINE, "{0}.enable()", getClass().getName());
         if (!getConfig().getBoolean("enabled", false)) {
@@ -108,6 +109,10 @@ public abstract class SFeature implements Feature {
         if (this instanceof SCommandExecutor) {
             ((SCommandExecutor) this).registerCommand(this);
         }
+
+        //Attempt loading ConfigPath's
+        new ConfigPathProcessor(getLogger()).loadValues(getConfig(), this);
+
         logger.log(Level.INFO, "Enabled");
     }
 
@@ -145,7 +150,7 @@ public abstract class SFeature implements Feature {
     //
     private final List<SListener> listeners = new ArrayList<>();
     private final List<SCommandExecutor> commands = new ArrayList<>();
-    
+
     protected final void registerListener(SListener listener) {
         if (!listeners.contains(listener)) {
             getServer().getPluginManager().registerEvents(listener, getRootPlugin());
@@ -154,7 +159,7 @@ public abstract class SFeature implements Feature {
             //The listener was already registed
         }
     }
-    
+
     protected final void unregisterListener(SListener listener) {
         if (listeners.contains(listener)) {
             HandlerList.unregisterAll(listener);
@@ -163,7 +168,7 @@ public abstract class SFeature implements Feature {
             //The listener was not registered
         }
     }
-    
+
     protected final void registerCommand(SCommandExecutor command) {
         if (!commands.contains(command)) {
             getCommandManager().registerCommandExecutor(command);
@@ -172,7 +177,7 @@ public abstract class SFeature implements Feature {
             //The listener has already been registered by this feature
         }
     }
-    
+
     protected final void unregisterCommand(SCommandExecutor command) {
         if (commands.contains(command)) {
             getCommandManager().unRegisterCommandExecutor(command);
@@ -181,14 +186,14 @@ public abstract class SFeature implements Feature {
             //The listener is not registered
         }
     }
-    
+
     private CommandManager cm;
-    
+
     private CommandManager getCommandManager() {
         if (cm == null) {
             cm = new CommandManager(getRootPlugin());
         }
         return cm;
     }
-    
+
 }

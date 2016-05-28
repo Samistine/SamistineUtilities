@@ -25,7 +25,6 @@ package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.api.SFeature;
 import com.samistine.samistineutilities.utils.annotations.config.ConfigPath;
-import com.samistine.samistineutilities.utils.annotations.config.ConfigPathProcessor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -36,10 +35,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  * @author Samuel
  */
 public class ChatUtils extends SFeature implements Listener {
-
-    public ChatUtils() {
-        new ConfigPathProcessor(getLogger()).loadValues(getRootConfig().getConfigurationSection("ChatUtils"), this);
-    }
 
     @ConfigPath(path = "stripNonEnglishCharacters")
     private boolean stripNonEnglishCharacters;

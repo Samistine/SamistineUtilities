@@ -71,9 +71,6 @@ import java.util.Iterator;
 @FeatureInfo(name = "NoRainFall", desc = "Stops rain in specified worlds")
 public final class NoRainFall extends SFeature {
 
-    @ConfigPath(path = "enabled")
-    boolean conf_enabled = false;
-
     @ConfigPath(path = "all_worlds")
     boolean conf_all_worlds = false;
 
@@ -81,9 +78,7 @@ public final class NoRainFall extends SFeature {
     List<String> conf_worlds = Collections.emptyList();
 
     public NoRainFall() {
-        new ConfigPathProcessor(getLogger()).loadValues(getRootConfig().getConfigurationSection("NoRainFall"), this);
-
-        if (conf_enabled && !conf_all_worlds) {
+        if (!conf_all_worlds) {
             Iterator<String> it = conf_worlds.iterator();
             while (it.hasNext()) {
                 String world_name = it.next();
@@ -94,10 +89,8 @@ public final class NoRainFall extends SFeature {
             }
         }
 
-        if (conf_enabled) {
-            new NRFListener(conf_all_worlds, new HashSet<>(conf_worlds)).registerListener(this);
-            getLogger().log(Level.INFO, "Loaded, Weather is disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
-        }
+        new NRFListener(conf_all_worlds, new HashSet<>(conf_worlds)).registerListener(this);
+        getLogger().log(Level.INFO, "Loaded, Weather is disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
     }
 
     /**

@@ -77,9 +77,6 @@ import java.util.logging.Level;
 @FeatureInfo(name = "NoSandFall", desc = "Stops falling blocks in specified worlds")
 public final class NoSandFall extends SFeature {
 
-    @ConfigPath(path = "enabled")
-    boolean conf_enabled = false;
-
     @ConfigPath(path = "all_worlds")
     boolean conf_all_worlds = false;
 
@@ -89,7 +86,7 @@ public final class NoSandFall extends SFeature {
     public NoSandFall() {
         new ConfigPathProcessor(getLogger()).loadValues(getRootConfig().getConfigurationSection("NoSandFall"), this);
 
-        if (conf_enabled && !conf_all_worlds) {
+        if (!conf_all_worlds) {
             Iterator<String> it = conf_worlds.iterator();
             while (it.hasNext()) {
                 String world_name = it.next();
@@ -100,10 +97,8 @@ public final class NoSandFall extends SFeature {
             }
         }
 
-        if (conf_enabled) {
-            new NSFListener(conf_all_worlds, new HashSet<>(conf_worlds)).registerListener(this);
-            getLogger().log(Level.INFO, "Loaded, Falling blocks are disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
-        }
+        new NSFListener(conf_all_worlds, new HashSet<>(conf_worlds)).registerListener(this);
+        getLogger().log(Level.INFO, "Loaded, Falling blocks are disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
     }
 
     /**
