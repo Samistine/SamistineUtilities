@@ -23,6 +23,7 @@
  */
 package com.samistine.samistineutilities;
 
+import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -38,17 +39,32 @@ public final class SamistineUtilities extends JavaPlugin {
     public void onEnable() {
         getCommand("utils").setExecutor(this);
         saveDefaultConfig();
+        reloadConfig();
         for (Features feature : Features.values()) {
-            getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[SamistineUtilities]" + ChatColor.GRAY + " Loading " + feature.getName());
+            getLogger().log(Level.FINE, "Loading {0}", feature.getName());
             SFeatureWrapper wrapper = feature.getFeatureWrapper();
-            wrapper.enable();
+            if (getConfig().getBoolean(wrapper.getName() + ".enabled", false)) {
+                wrapper.enable();
+            }
         }
+        StringBuilder sb = new StringBuilder();
+
+        for (Features feature : Features.values()) {
+            SFeatureWrapper wrapper = feature.getFeatureWrapper();
+            boolean enabled = wrapper.getFeature() != null;
+            sb.append((enabled ? ChatColor.GREEN : ChatColor.RED) + wrapper.getName())
+                    .append(", ");
+        }
+        String status = sb.toString();
+        status = status.substring(0, status.lastIndexOf(", "));
+
+        getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[SamistineUtilities]" + ChatColor.GRAY + " Status: " + status);
     }
 
     @Override
     public void onDisable() {
         for (Features feature : Features.values()) {
-            getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[SamistineUtilities]" + ChatColor.GRAY + " Disabling " + feature.getName());
+            getLogger().log(Level.FINE, "Disabling {0}", feature.getName());
             SFeatureWrapper wrapper = feature.getFeatureWrapper();
             wrapper.disable();
         }

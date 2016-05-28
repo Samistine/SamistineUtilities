@@ -92,7 +92,7 @@ public final class NoRainFall extends SFeature {
         }
 
         new NRFListener(conf_all_worlds, new HashSet<>(conf_worlds)).registerListener(this);
-        getLogger().log(Level.INFO, "Loaded, Weather is disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
+        getLogger().log(Level.FINE, "Loaded, Weather is disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
     }
 
     /**

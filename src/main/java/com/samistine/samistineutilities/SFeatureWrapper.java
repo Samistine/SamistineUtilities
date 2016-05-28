@@ -25,8 +25,6 @@ package com.samistine.samistineutilities;
 
 import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.api.SFeature;
-import com.samistine.samistineutilities.api.SListener;
-import com.samistine.samistineutilities.api.SCommandExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.Validate;
@@ -37,24 +35,28 @@ import org.apache.commons.lang.Validate;
  * @param <T> The class that this wrapper is wrapping
  */
 public final class SFeatureWrapper<T extends SFeature> {
-    
+
     private static final Logger logger = SamistineUtilities.getInstance().getLogger();
-    
+
     private final Class<T> clazz;
     private final FeatureInfo featureInfo;
-    
+
     public SFeatureWrapper(Class<T> clazz) {
         this.clazz = clazz;
         this.featureInfo = clazz.getAnnotation(FeatureInfo.class);
         Validate.notNull(featureInfo, "Features must contain the FeatureInfo annotation");
     }
-    
+
     private T feature;
-    
+
+    public String getName() {
+        return featureInfo.name();
+    }
+
     public T getFeature() {
         return feature;
     }
-    
+
     public void enable() {
         try {
             feature = clazz.newInstance();
@@ -63,21 +65,21 @@ public final class SFeatureWrapper<T extends SFeature> {
             logger.log(Level.SEVERE, "Could not instantiate " + featureInfo.name(), ex);
         }
     }
-    
+
     public void disable() {
         if (feature != null) {
             try {
-                feature.disable(true);
+                feature.disable();
             } catch (RuntimeException ex) {
                 logger.log(Level.SEVERE, "An exception was thrown while attempting to disable " + featureInfo.name(), ex);
             }
 
             //Remove references
             feature = null;
-            
+
         } else {
             //feature wasn't enabled
         }
     }
-    
+
 }

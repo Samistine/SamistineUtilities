@@ -98,7 +98,7 @@ public final class NoSandFall extends SFeature {
         }
 
         new NSFListener(conf_all_worlds, new HashSet<>(conf_worlds)).registerListener(this);
-        getLogger().log(Level.INFO, "Loaded, Falling blocks are disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
+        getLogger().log(Level.FINE, "Loaded, Falling blocks are disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
     }
 
     /**

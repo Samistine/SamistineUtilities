@@ -17,7 +17,7 @@
 ########################
 #######NoSandFall#######
 NoSandFall: {
-    enabled: true,
+    enabled: false,
     all_worlds: true,
     worlds: [
         "world",
@@ -30,7 +30,7 @@ NoSandFall: {
 ########################
 #######NoRainFall#######
 NoRainFall: {
-    enabled: true,
+    enabled: false,
     all_worlds: true,
     worlds: [
         "world",
@@ -43,21 +43,21 @@ NoRainFall: {
 ########################
 #######FindTiles#######
 FindTiles: {
-    enabled: true
+    enabled: false
 }
 ########################
 
 ########################
 ####PhysicsDisabler####
 PhysicsDisabler: {
-    enabled: true
+    enabled: false
 }
 ########################
 
 ########################
 #######ChatUtils#######
 ChatUtils: {
-    enabled: true,
+    enabled: false,
     stripNonEnglishCharacters: true
 }
 ########################

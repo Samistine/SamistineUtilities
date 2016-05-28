@@ -27,7 +27,6 @@ import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.api.objects.FeatureLogger;
 import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.utils.annotations.command.backend.CommandManager;
-import com.samistine.samistineutilities.utils.annotations.config.ConfigPathProcessor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -54,6 +53,7 @@ public abstract class SFeature implements Feature {
         this.name = annotation.name();
         this.desc = annotation.desc();
         this.logger = new FeatureLogger(this);
+        this.logger.setLevel(Level.ALL);
     }
 
     @Override
@@ -99,10 +99,6 @@ public abstract class SFeature implements Feature {
 
     public final void enable() {
         logger.log(Level.FINE, "{0}.enable()", getClass().getName());
-        if (!getConfig().getBoolean("enabled", false)) {
-            disable(false);
-            return;
-        }
         if (this instanceof SListener) {//Auto register main class if it implements listener
             ((SListener) this).registerListener(this);
         }
@@ -110,24 +106,20 @@ public abstract class SFeature implements Feature {
             ((SCommandExecutor) this).registerCommand(this);
         }
 
-        logger.log(Level.INFO, "Enabled");
+        logger.log(Level.FINE, "Enabled");
     }
 
     /**
      * This method can only be called a single time.
-     *
-     * @param log true if we should log that we are disabling
      */
-    public final void disable(boolean log) {
+    public final void disable() {
         logger.log(Level.FINE, "{0}.disable()", getClass().getName());
         onDisable();
         listeners.forEach(HandlerList::unregisterAll);
         listeners.clear();
         commands.forEach(getCommandManager()::unRegisterCommandExecutor);
         commands.clear();
-        if (log) {
-            logger.log(Level.INFO, "Disabled");
-        }
+        logger.log(Level.FINE, "Disabled");
     }
 
     /**
