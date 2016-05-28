@@ -29,6 +29,7 @@ import com.samistine.samistineutilities.api.SListener;
 import com.samistine.samistineutilities.api.SCommandExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.Validate;
 
 /**
  *
@@ -36,23 +37,24 @@ import java.util.logging.Logger;
  * @param <T> The class that this wrapper is wrapping
  */
 public final class SFeatureWrapper<T extends SFeature> {
-
+    
     private static final Logger logger = SamistineUtilities.getInstance().getLogger();
-
+    
     private final Class<T> clazz;
     private final FeatureInfo featureInfo;
-
+    
     public SFeatureWrapper(Class<T> clazz) {
         this.clazz = clazz;
         this.featureInfo = clazz.getAnnotation(FeatureInfo.class);
+        Validate.notNull(featureInfo, "Features must contain the FeatureInfo annotation");
     }
-
+    
     private T feature;
-
+    
     public T getFeature() {
         return feature;
     }
-
+    
     public void enable() {
         try {
             feature = clazz.newInstance();
@@ -61,7 +63,7 @@ public final class SFeatureWrapper<T extends SFeature> {
             logger.log(Level.SEVERE, "Could not instantiate " + featureInfo.name(), ex);
         }
     }
-
+    
     public void disable() {
         if (feature != null) {
             try {
@@ -72,10 +74,10 @@ public final class SFeatureWrapper<T extends SFeature> {
 
             //Remove references
             feature = null;
-
+            
         } else {
             //feature wasn't enabled
         }
     }
-
+    
 }

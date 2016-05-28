@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Samuel.
+ * Copyright 2016 Samuel Seidel.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.api.SFeature;
+import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.utils.annotations.config.ConfigPath;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,9 +33,10 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 /**
  *
- * @author Samuel
+ * @author Samuel Seidel
  */
-public class ChatUtils extends SFeature implements Listener {
+@FeatureInfo(name = "ChatUtils", desc = "Various chat things")
+public final class ChatUtils extends SFeature implements Listener {
 
     @ConfigPath(path = "stripNonEnglishCharacters")
     private boolean stripNonEnglishCharacters;
