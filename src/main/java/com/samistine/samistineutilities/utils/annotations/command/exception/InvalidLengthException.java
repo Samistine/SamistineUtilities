@@ -32,10 +32,13 @@ public class InvalidLengthException extends CommandException {
     private int expected;
     private int given;
 
-    public InvalidLengthException(String command, int expected, int given) {
-        super(command, (given < expected ? "Missing" : "Too many") + " arguments. (" + given + (given < expected ? "<" : ">") + expected + ")");
+    private String usage;
+
+    public InvalidLengthException(String command, int expected, int given, String usage) {
+        super(command, (given < expected ? "Missing" : "Too many") + " arguments. (" + given + (given < expected ? " < " : " > ") + expected + ")");
         this.expected = expected;
         this.given = given;
+        this.usage = usage;
     }
 
     public int getExpectedLength() {
@@ -52,6 +55,10 @@ public class InvalidLengthException extends CommandException {
 
     boolean isLonger() {
         return given > expected;
+    }
+
+    public String getUsage() {
+        return usage;
     }
 
 }

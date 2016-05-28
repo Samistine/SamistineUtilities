@@ -53,12 +53,13 @@ public class FeedbackErrorHandler implements CommandErrorHandler {
     @Override
     public void handleUnhandled(UnhandledCommandException exception, CommandSender sender, Command command, String[] args) {
         sender.sendMessage(ChatColor.RED + "Unhandled exception, see console for details: " + exception.getMessage());
+        exception.printStackTrace();
     }
 
     @Override
     public void handleLength(InvalidLengthException exception, CommandSender sender, Command command, String[] args) {
         sender.sendMessage(ChatColor.RED + exception.getMessage());
-        sender.sendMessage(ChatColor.RED + "Usage: /" + command.getName() + " " + command.getUsage());
+        sender.sendMessage(ChatColor.RED + exception.getUsage());
     }
 
     @Override

@@ -49,7 +49,6 @@ public interface CommandErrorHandler {
     public void handleUnhandled(UnhandledCommandException exception, CommandSender sender, Command command, String[] args);
 
     default void handleException(CommandException ex, CommandSender sender, Command command, String[] args) {
-        ex.printStackTrace();
         if (ex instanceof PermissionException) {
             handlePermissionException((PermissionException) ex, sender, command, args);
         } else if (ex instanceof IllegalSenderException) {

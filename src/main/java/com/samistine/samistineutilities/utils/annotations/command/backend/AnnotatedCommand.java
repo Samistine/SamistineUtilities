@@ -24,18 +24,13 @@
 package com.samistine.samistineutilities.utils.annotations.command.backend;
 
 import com.samistine.samistineutilities.utils.annotations.command.CommandTabCompletion;
-import com.samistine.samistineutilities.utils.annotations.command.JoinedArg;
-import com.samistine.samistineutilities.utils.annotations.command.OptionalArg;
 import com.samistine.samistineutilities.utils.annotations.command.handler.CommandErrorHandler;
-import com.samistine.samistineutilities.utils.annotations.command.exception.ArgumentParseException;
 import com.samistine.samistineutilities.utils.annotations.command.exception.CommandException;
 import com.samistine.samistineutilities.utils.annotations.command.exception.CommandRegistrationException;
 import com.samistine.samistineutilities.utils.annotations.command.exception.IllegalSenderException;
 import com.samistine.samistineutilities.utils.annotations.command.exception.InvalidLengthException;
 import com.samistine.samistineutilities.utils.annotations.command.exception.PermissionException;
 import com.samistine.samistineutilities.utils.annotations.command.exception.UnhandledCommandException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -95,6 +90,23 @@ public class AnnotatedCommand {
 
         //Validate {@link commandMethod}
         validateCommandMethodArguments();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUsageMessage() {
+        String msg;
+        if (parent != null) {
+            msg = "Usage: /" + parent.name + " " + name;
+            if (!usage.isEmpty()) {
+                msg = msg + " " + usage;
+            }
+        } else {
+            msg = "Usage: /" + name + " " + usage;
+        }
+        return msg;
     }
 
     private Command pluginCommand;
@@ -157,7 +169,6 @@ public class AnnotatedCommand {
 
             return true;
         } catch (CommandException ex) {
-            ex.printStackTrace();
             if (errorHandler != null) {
                 errorHandler.handleException(ex, sender, command, args);
                 return false;
@@ -241,7 +252,7 @@ public class AnnotatedCommand {
             return completions;
         }
 
-        return null;
+        return Collections.emptyList();
     }
 
     private void checkPermission(CommandSender sender) {
@@ -253,10 +264,10 @@ public class AnnotatedCommand {
 
     private void checkArgsLength(String[] args) {
         if (args.length < minArgs) {
-            throw new InvalidLengthException(this.name, this.minArgs, args.length);
+            throw new InvalidLengthException(this.name, this.minArgs, args.length, getUsageMessage());
         }
         if (maxArgs != -1 && args.length > maxArgs) {
-            throw new InvalidLengthException(this.name, this.maxArgs, args.length);
+            throw new InvalidLengthException(this.name, this.maxArgs, args.length, getUsageMessage());
         }
     }
 
@@ -299,7 +310,7 @@ public class AnnotatedCommand {
             super(
                     AnnotatedCommand.this.name,
                     AnnotatedCommand.this.description,
-                    "/<command> " + AnnotatedCommand.this.usage,
+                    AnnotatedCommand.this.usage,
                     Arrays.asList(aliases)
             );
             this.plugin = plugin;
