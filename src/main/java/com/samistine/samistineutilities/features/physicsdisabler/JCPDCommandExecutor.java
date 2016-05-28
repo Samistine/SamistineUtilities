@@ -13,7 +13,7 @@ final class JCPDCommandExecutor implements SCommandExecutor {
         this.plugin = plugin;
     }
 
-    @Command(names = "disablephysics", description = "Disable physics in all or specific areas", usage = "[ mode [on|off|region] | addregion (regionname) (worldname) [(x)|(y)|(z) (x)|(y)|(z)] | removeregion (regionname) ]")
+    @Command(name = "disablephysics", description = "Disable physics in all or specific areas", usage = "[ mode [on|off|region] | addregion (regionname) (worldname) [(x)|(y)|(z) (x)|(y)|(z)] | removeregion (regionname) ]")
     public void onCommand(CommandSender sender, String label, String[] args) {
         if (args.length >= 2) {
             switch (args[0]) {

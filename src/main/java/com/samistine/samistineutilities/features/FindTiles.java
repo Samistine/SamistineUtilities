@@ -67,14 +67,14 @@ public final class FindTiles extends SFeature implements SListener, SCommandExec
         }
     }
 
-    @Command(names = "findtiles", description = "Find chunks that may contain too many tile entities", usage = "test")
+    @Command(name = "findtiles", description = "Find chunks that may contain too many tile entities", usage = "[ list | tp (number) ]")
     @CommandTabCompletion("list|tp")
     public void findTilesCommand(CommandSender sender, String label, String[] args) {
         sender.sendMessage("/findtiles list   List laggy chunks");
         sender.sendMessage("/findtiles tp     TP to last laggy chunk");
     }
 
-    @SubCommand(parent = "findtiles", name = "list")
+    @SubCommand(parent = "findtiles", name = "list", description = "List locations where too many entities were previously detected")
     public void findTilesTPCommand(CommandSender sender, String label, String[] args) {
         sender.sendMessage(ChatColor.GOLD + "List with no duplicates");
         int i = 0;
@@ -85,7 +85,7 @@ public final class FindTiles extends SFeature implements SListener, SCommandExec
         }
     }
 
-    @SubCommand(parent = "findtiles", name = "tp")
+    @SubCommand(parent = "findtiles", name = "tp", usage = "(number)", description = "Teleport to a location where too many entities have previously been detected")
     public void findTilesListCommand(CommandSender sender, String label, String[] args) {
         try {
             int number = Integer.parseInt(args[0]);

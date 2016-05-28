@@ -1,6 +1,6 @@
-package com.samistine.samistineutilities.utils.annotations.command;
+package com.samistine.samistineutilities.utils.annotations.command.exception;
 
-class CommandRegistrationException extends RuntimeException {
+public class CommandRegistrationException extends RuntimeException {
 
     private static final long serialVersionUID = -1674769027758878225L;
 

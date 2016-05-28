@@ -26,7 +26,7 @@ package com.samistine.samistineutilities.api;
 import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.api.objects.FeatureLogger;
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.utils.annotations.command.CommandManager;
+import com.samistine.samistineutilities.utils.annotations.command.backend.CommandManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -152,7 +152,7 @@ public abstract class SFeature implements Feature {
 
     private CommandManager getCommandManager() {
         if (cm == null) {
-            cm = new com.samistine.samistineutilities.utils.annotations.command.CommandManager(getRootPlugin());
+            cm = new CommandManager(getRootPlugin());
         }
         return cm;
     }

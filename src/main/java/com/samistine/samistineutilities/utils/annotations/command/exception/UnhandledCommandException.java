@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Samuel Seidel.
+ * Copyright 2016 Samuel.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,36 +24,20 @@
 package com.samistine.samistineutilities.utils.annotations.command.exception;
 
 /**
- * Thrown when executing a command if the command-sender does not have
- * sufficient privileges for the command.
  *
- * @author Samuel Seidel
+ * @author Samuel
  */
-public class PermissionException extends CommandException {
+public class UnhandledCommandException extends CommandException {
 
-    /**
-     * The permissions required to execute the command
-     */
-    private final String permission;
-
-    /**
-     * Create a new instance of {@link PermissionException}
-     *
-     * @param permission permission that was needed to execute the command
-     * without throwing this exception
-     */
-    public PermissionException(String command, String permission) {
-        super(command, "Permission {" + permission + "} is required to execute this command");
-        this.permission = permission;
+    public UnhandledCommandException(String command, String message) {
+        super(command, message);
     }
 
-    /**
-     * Get the permission needed to execute the command
-     *
-     * @return permission
-     */
-    public String getPermission() {
-        return permission;
+    public UnhandledCommandException(String command, String message, Throwable cause) {
+        super(command, message, cause);
     }
 
+    public UnhandledCommandException(String command, Throwable cause) {
+        super(command, cause);
+    }
 }

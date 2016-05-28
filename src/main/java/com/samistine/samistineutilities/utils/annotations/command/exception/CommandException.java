@@ -22,11 +22,6 @@ public class CommandException extends RuntimeException {
      */
     private final String command;
 
-    public CommandException(String command) {
-        super();
-        this.command = command;
-    }
-
     public CommandException(String command, String message) {
         super(message);
         this.command = command;
