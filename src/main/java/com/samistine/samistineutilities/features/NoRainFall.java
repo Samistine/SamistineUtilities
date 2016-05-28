@@ -78,6 +78,8 @@ public final class NoRainFall extends SFeature {
     List<String> conf_worlds = Collections.emptyList();
 
     public NoRainFall() {
+        new ConfigPathProcessor(getLogger()).loadValues(getConfig(), this);
+
         if (!conf_all_worlds) {
             Iterator<String> it = conf_worlds.iterator();
             while (it.hasNext()) {

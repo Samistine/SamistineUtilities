@@ -84,7 +84,7 @@ public final class NoSandFall extends SFeature {
     List<String> conf_worlds = Collections.emptyList();
 
     public NoSandFall() {
-        new ConfigPathProcessor(getLogger()).loadValues(getRootConfig().getConfigurationSection("NoSandFall"), this);
+        new ConfigPathProcessor(getLogger()).loadValues(getConfig(), this);
 
         if (!conf_all_worlds) {
             Iterator<String> it = conf_worlds.iterator();

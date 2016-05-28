@@ -110,9 +110,6 @@ public abstract class SFeature implements Feature {
             ((SCommandExecutor) this).registerCommand(this);
         }
 
-        //Attempt loading ConfigPath's
-        new ConfigPathProcessor(getLogger()).loadValues(getConfig(), this);
-
         logger.log(Level.INFO, "Enabled");
     }
 
