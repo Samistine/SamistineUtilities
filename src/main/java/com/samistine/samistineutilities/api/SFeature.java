@@ -29,9 +29,11 @@ import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.utils.annotations.command.backend.CommandManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;
 
@@ -40,11 +42,11 @@ import org.bukkit.event.HandlerList;
  * @author Samuel Seidel
  */
 public abstract class SFeature implements Feature {
-
+    
     private final String name;
     private final String desc;
     private final Logger logger;
-
+    
     {
         FeatureInfo annotation = getClass().getAnnotation(FeatureInfo.class);
         Validate.notNull(annotation, "Implementing class must contain FeatureInfo anotation");
@@ -52,46 +54,78 @@ public abstract class SFeature implements Feature {
         this.desc = annotation.desc();
         this.logger = new FeatureLogger(this);
     }
-
+    
     @Override
     public final String getName() {
         return name;
     }
-
+    
     @Override
     public final String getDesc() {
         return desc;
     }
-
+    
     @Override
     public final Logger getLogger() {
         return logger;
     }
-
+    
     @Override
     public final Server getServer() {
         return getRootPlugin().getServer();
     }
-
+    
     @Override
     public final SamistineUtilities getRootPlugin() {
         return SamistineUtilities.getInstance();
     }
-
+    
     @Override
     public final FileConfiguration getRootConfig() {
         return getRootPlugin().getConfig();
     }
 
     /**
-     * This method can only be called a single time.
+     * The configuration section for this feature
+     *
+     * @return config
      */
-    public final void disable() {
+    public final ConfigurationSection getConfig() {
+        ConfigurationSection section = getRootConfig().getConfigurationSection(name);
+        Validate.notNull(section);
+        return section;
+    }
+    
+    public final void enable() {
+        logger.log(Level.FINE, "{0}.enable()", getClass().getName());
+        if (!getConfig().getBoolean("enabled", false)) {
+            disable(false);
+            return;
+        }
+        if (this instanceof SListener) {//Auto register main class if it implements listener
+            ((SListener) this).registerListener(this);
+        }
+        if (this instanceof SCommandExecutor) {
+            ((SCommandExecutor) this).registerCommand(this);
+        }
+        logger.log(Level.INFO, "Enabled");
+    }
+
+    /**
+     * This method can only be called a single time.
+     *
+     * @param log true if we should log that we are disabling
+     */
+    public final void disable(boolean log) {
+        logger.log(Level.FINE, "{0}.disable()", getClass().getName());
         onDisable();
         listeners.forEach(HandlerList::unregisterAll);
         listeners.clear();
         commands.forEach(getCommandManager()::unRegisterCommandExecutor);
         commands.clear();
+        if (log) {
+            logger.log(Level.INFO, "Disabled");
+        }
     }
 
     /**
@@ -111,7 +145,7 @@ public abstract class SFeature implements Feature {
     //
     private final List<SListener> listeners = new ArrayList<>();
     private final List<SCommandExecutor> commands = new ArrayList<>();
-
+    
     protected final void registerListener(SListener listener) {
         if (!listeners.contains(listener)) {
             getServer().getPluginManager().registerEvents(listener, getRootPlugin());
@@ -120,7 +154,7 @@ public abstract class SFeature implements Feature {
             //The listener was already registed
         }
     }
-
+    
     protected final void unregisterListener(SListener listener) {
         if (listeners.contains(listener)) {
             HandlerList.unregisterAll(listener);
@@ -129,8 +163,8 @@ public abstract class SFeature implements Feature {
             //The listener was not registered
         }
     }
-
-    protected void registerCommand(SCommandExecutor command) {
+    
+    protected final void registerCommand(SCommandExecutor command) {
         if (!commands.contains(command)) {
             getCommandManager().registerCommandExecutor(command);
             commands.add(command);
@@ -138,8 +172,8 @@ public abstract class SFeature implements Feature {
             //The listener has already been registered by this feature
         }
     }
-
-    protected void unregisterCommand(SCommandExecutor command) {
+    
+    protected final void unregisterCommand(SCommandExecutor command) {
         if (commands.contains(command)) {
             getCommandManager().unRegisterCommandExecutor(command);
             commands.remove(command);
@@ -147,14 +181,14 @@ public abstract class SFeature implements Feature {
             //The listener is not registered
         }
     }
-
+    
     private CommandManager cm;
-
+    
     private CommandManager getCommandManager() {
         if (cm == null) {
             cm = new CommandManager(getRootPlugin());
         }
         return cm;
     }
-
+    
 }

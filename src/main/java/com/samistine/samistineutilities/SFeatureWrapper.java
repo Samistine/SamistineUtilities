@@ -56,12 +56,7 @@ public final class SFeatureWrapper<T extends SFeature> {
     public void enable() {
         try {
             feature = clazz.newInstance();
-            if (feature instanceof SListener) {//Auto register main class if it implements listener
-                ((SListener) feature).registerListener(feature);
-            }
-            if (feature instanceof SCommandExecutor) {
-                ((SCommandExecutor) feature).registerCommand(feature);
-            }
+            feature.enable();
         } catch (InstantiationException | IllegalAccessException | RuntimeException ex) {
             logger.log(Level.SEVERE, "Could not instantiate " + featureInfo.name(), ex);
         }
@@ -70,7 +65,7 @@ public final class SFeatureWrapper<T extends SFeature> {
     public void disable() {
         if (feature != null) {
             try {
-                feature.disable();
+                feature.disable(true);
             } catch (RuntimeException ex) {
                 logger.log(Level.SEVERE, "An exception was thrown while attempting to disable " + featureInfo.name(), ex);
             }

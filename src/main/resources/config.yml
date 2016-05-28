@@ -12,11 +12,13 @@
 #        \____/   \__| |_| |_| |_|  \__| |_|  \___| |___/        #
 
 
+# {FeatureName}.enabled - enabled or disabled the entire feature
+
 ########################
 #######NoSandFall#######
 NoSandFall: {
-    enabled: false,
-    all_worlds: false,
+    enabled: true,
+    all_worlds: true,
     worlds: [
         "world",
         "world_nether",
@@ -29,12 +31,34 @@ NoSandFall: {
 ########################
 #######NoRainFall#######
 NoRainFall: {
-    enabled: false,
-    all_worlds: false,
+    enabled: true,
+    all_worlds: true,
     worlds: [
         "world",
         "world_nether",
         "world_the_end"
     ]
+}
+########################
+
+########################
+#######FindTiles#######
+FindTiles: {
+    enabled: true
+}
+########################
+
+########################
+#######PhysicsDisabler#######
+PhysicsDisabler: {
+    enabled: true
+}
+########################
+
+########################
+#######ChatUtils#######
+ChatUtils: {
+    enabled: true,
+    stripNonEnglishCharacters: true
 }
 ########################
