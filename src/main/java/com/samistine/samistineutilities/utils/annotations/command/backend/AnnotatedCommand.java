@@ -35,11 +35,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
@@ -74,7 +73,7 @@ public class AnnotatedCommand {
 
     private CommandErrorHandler errorHandler;
 
-    Set<AnnotatedCommand> subCommands = new LinkedHashSet<>();
+    Collection<AnnotatedCommand> subCommands = new ArrayList<>();
 
     public AnnotatedCommand(String name, String[] aliases, String usage, String description, String permission, Object commandClass, Method commandMethod, int minArgs, int maxArgs, CommandErrorHandler errorHandler) {
         this.name = name;
