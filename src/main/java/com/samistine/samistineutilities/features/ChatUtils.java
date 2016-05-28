@@ -24,11 +24,12 @@
 package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.api.SFeature;
+import com.samistine.samistineutilities.api.SListener;
 import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.utils.annotations.config.ConfigPath;
+import java.util.regex.Pattern;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 /**
@@ -36,16 +37,17 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  * @author Samuel Seidel
  */
 @FeatureInfo(name = "ChatUtils", desc = "Various chat things")
-public final class ChatUtils extends SFeature implements Listener {
+public final class ChatUtils extends SFeature implements SListener {
 
     @ConfigPath(path = "stripNonEnglishCharacters")
     private boolean stripNonEnglishCharacters;
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW)
     public void stripNonEnglishCharacters(AsyncPlayerChatEvent event) {
         if (stripNonEnglishCharacters) {
-            if (event.getMessage().matches("[^\\x00-\\x7F]+")) {
-                event.setMessage(event.getMessage().replaceAll("[^\\x00-\\x7F]+", ""));
+            Pattern p = Pattern.compile("[^\\x00-\\x7F]");
+            if (p.matcher(event.getMessage()).find()) {
+                event.setMessage(event.getMessage().replaceAll("[^\\x00-\\x7F]", ""));
             }
         }
     }
