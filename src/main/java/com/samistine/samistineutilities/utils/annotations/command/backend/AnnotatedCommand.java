@@ -24,7 +24,10 @@
 package com.samistine.samistineutilities.utils.annotations.command.backend;
 
 import com.samistine.samistineutilities.utils.annotations.command.CommandTabCompletion;
+import com.samistine.samistineutilities.utils.annotations.command.JoinedArg;
+import com.samistine.samistineutilities.utils.annotations.command.OptionalArg;
 import com.samistine.samistineutilities.utils.annotations.command.handler.CommandErrorHandler;
+import com.samistine.samistineutilities.utils.annotations.command.exception.ArgumentParseException;
 import com.samistine.samistineutilities.utils.annotations.command.exception.CommandException;
 import com.samistine.samistineutilities.utils.annotations.command.exception.CommandRegistrationException;
 import com.samistine.samistineutilities.utils.annotations.command.exception.IllegalSenderException;
@@ -138,6 +141,7 @@ public class AnnotatedCommand {
             checkArgsLength(args);
 
             try {
+                commandMethod.setAccessible(true);
                 commandMethod.invoke(commandClass, sender, label, args);
             } catch (InvocationTargetException e) {
                 Throwable cause = e.getCause();
@@ -153,6 +157,7 @@ public class AnnotatedCommand {
 
             return true;
         } catch (CommandException ex) {
+            ex.printStackTrace();
             if (errorHandler != null) {
                 errorHandler.handleException(ex, sender, command, args);
                 return false;
@@ -257,9 +262,9 @@ public class AnnotatedCommand {
 
     private void validateCommandMethodArguments() {
         if (!commandMethod.getReturnType().equals(Void.TYPE)) {
-            throw new CommandRegistrationException("Incorrect return type for command method " + commandMethod.getName() + " in " + commandMethod.getClass().getName());
+            throw new CommandRegistrationException("Incorrect return type for command method " + commandMethod.getName() + " in " + commandClass.getClass().getName());
         } else if (!Arrays.equals(commandMethod.getParameterTypes(), new Class<?>[]{CommandSender.class, String.class, String[].class})) {
-            throw new CommandRegistrationException("Incorrect arguments for command method " + commandMethod.getName() + " in " + commandMethod.getClass().getName());
+            throw new CommandRegistrationException("Incorrect arguments for command method " + commandMethod.getName() + " in " + commandClass.getClass().getName());
         }
     }
 

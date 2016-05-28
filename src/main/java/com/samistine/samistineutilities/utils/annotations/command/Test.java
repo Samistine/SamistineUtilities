@@ -44,29 +44,32 @@ public class Test {
 
     }
 
-    /*void run() throws NoSuchMethodException {
+    void run() throws NoSuchMethodException {
         System.out.println("com.samistine.samistineutilities.utils.annotations.command3.Test.run()");
-        AnnotatedCommand command = new AnnotatedCommand("test", new String[0], "/test", "A test command", "", "", this, this.getClass().getDeclaredMethod("testMethod", CommandSender.class, String.class, String.class), 1, -1, CommandErrorHandler.FEEDBACK);
-        command.addSubcommand(new AnnotatedCommand("2", new String[0], "", "a subcommand", "", "", this, this.getClass().getDeclaredMethod("testMethod2", CommandSender.class, String.class, String.class), 0, 10, CommandErrorHandler.FEEDBACK));
+        AnnotatedCommand command = new AnnotatedCommand("test", new String[0], "/test", "A test command", "", this, this.getClass().getDeclaredMethod("testMethod", CommandSender.class, String.class, String[].class), 1, -1, CommandErrorHandler.FEEDBACK);
+        command.addSubcommand(new AnnotatedCommand("2", new String[0], "", "a subcommand", "", this.getClass(),
+                this.getClass().getDeclaredMethod("testMethod2", CommandSender.class, String.class, String[].class),
+                0, 10, CommandErrorHandler.FEEDBACK));
         org.bukkit.command.Command cmd = command.getCommandInstance(null);
-        //cmd.execute(exec, "test", new String[]{"1"});
-        //cmd.execute(exec, "test", new String[]{"2"});
-        System.err.println(cmd.tabComplete(exec, "test", new String[]{"2"}));
-    }*/
+        cmd.execute(exec, "test", new String[]{"1"});
+        cmd.execute(exec, "test", new String[]{"2"});
+        System.err.println(cmd.tabComplete(exec, "test", new String[]{"2", ""}));
+    }
+
     @CommandTabCompletion(value = "a|b|c")
-    void testMethod(CommandSender sender, String test, @OptionalArg(def = "test") String test2) {
+    void testMethod(CommandSender sender, String label, String[] args) {
         System.out.println("com.samistine.samistineutilities.utils.annotations.command3.Test.testMethod()");
-        sender.sendMessage("Command Successfull" + test);
+        sender.sendMessage("Command Successfull" + args);
     }
 
     @CommandTabCompletion(value = "1|2|3")
-    void testMethod2(CommandSender sender, String test, @OptionalArg(def = "test") String test2) {
+    void testMethod2(CommandSender sender, String label, String[] args) {
         System.out.println("com.samistine.samistineutilities.utils.annotations.command3.Test.testMethod2()");
-        sender.sendMessage("Command Successfull" + test);
+        sender.sendMessage("Command Successfull" + args);
     }
 
     public static void main(String[] args) throws Exception {
-        //new Test().run();
+        new Test().run();
     }
 
     CommandSender exec = new CommandSender() {
