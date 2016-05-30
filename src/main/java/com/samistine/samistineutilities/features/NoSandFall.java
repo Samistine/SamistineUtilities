@@ -23,11 +23,9 @@
  */
 package com.samistine.samistineutilities.features;
 
-import com.samistine.samistineutilities.utils.annotations.config.ConfigPath;
 import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.api.SFeature;
 import com.samistine.samistineutilities.api.SListener;
-import com.samistine.samistineutilities.utils.annotations.config.ConfigPathProcessor;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -36,7 +34,6 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -55,9 +52,6 @@ import java.util.logging.Level;
  * <p>
  * This project is a complete rewrite of a similar plugin also called
  * NoSandFall.</p>
- * <p>
- * This utility does not affect server performance if left disabled. It is
- * disabled by default in the configuration.</p>
  * </blockquote>
  * </div>
  *
@@ -77,14 +71,10 @@ import java.util.logging.Level;
 @FeatureInfo(name = "NoSandFall", desc = "Stops falling blocks in specified worlds")
 public final class NoSandFall extends SFeature {
 
-    @ConfigPath(path = "all_worlds")
-    boolean conf_all_worlds = false;
-
-    @ConfigPath(path = "worlds")
-    List<String> conf_worlds = Collections.emptyList();
+    private final boolean conf_all_worlds = this.getConfig().getBoolean("all_worlds", false);
+    private final List<String> conf_worlds = this.getConfig().getStringList("worlds");
 
     public NoSandFall() {
-        new ConfigPathProcessor(getLogger()).loadValues(getConfig(), this);
 
         if (!conf_all_worlds) {
             Iterator<String> it = conf_worlds.iterator();

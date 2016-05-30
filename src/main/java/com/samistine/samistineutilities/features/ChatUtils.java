@@ -26,8 +26,10 @@ package com.samistine.samistineutilities.features;
 import com.samistine.samistineutilities.api.SFeature;
 import com.samistine.samistineutilities.api.SListener;
 import com.samistine.samistineutilities.api.objects.FeatureInfo;
-import com.samistine.samistineutilities.utils.annotations.config.ConfigPath;
-import com.samistine.samistineutilities.utils.annotations.config.ConfigPathProcessor;
+import com.samistine.samistineutilities.utils.Pair;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,21 +42,29 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 @FeatureInfo(name = "ChatUtils", desc = "Various chat things")
 public final class ChatUtils extends SFeature implements SListener {
 
+    List<Pair<Pattern, String>> regexAndReplacements = new ArrayList<>();
+
     public ChatUtils() {
-        new ConfigPathProcessor(getLogger()).loadValues(getConfig(), this);
+        Map<String, Object> values = getConfig().getConfigurationSection("Regex").getValues(false);
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
+            Pattern pattern = Pattern.compile(entry.getKey());
+            String replacement = (String) entry.getValue();
+            regexAndReplacements.add(Pair.create(pattern, replacement));
+        }
     }
 
-    @ConfigPath(path = "stripNonEnglishCharacters")
-    private boolean stripNonEnglishCharacters;
-
     @EventHandler(priority = EventPriority.LOW)
-    public void stripNonEnglishCharacters(AsyncPlayerChatEvent event) {
-        if (stripNonEnglishCharacters) {
-            Pattern p = Pattern.compile("[^\\x00-\\x7F]");
-            if (p.matcher(event.getMessage()).find()) {
-                event.setMessage(event.getMessage().replaceAll("[^\\x00-\\x7F]", ""));
-            }
+    public void regex(AsyncPlayerChatEvent event) {
+        String msg = event.getMessage();
+
+        for (Pair<Pattern, String> regexAndReplacement : regexAndReplacements) {
+            Pattern pattern = regexAndReplacement.first;
+            String replacement = regexAndReplacement.second;
+
+            msg = pattern.matcher(msg).replaceAll(replacement);
         }
+
+        event.setMessage(msg);
     }
 
 }

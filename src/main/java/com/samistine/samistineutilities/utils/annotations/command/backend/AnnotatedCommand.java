@@ -88,7 +88,13 @@ public class AnnotatedCommand {
         this.errorHandler = errorHandler;
 
         //Validate {@link commandMethod}
-        validateCommandMethodArguments();
+        if (!commandMethod.getReturnType().equals(Void.TYPE)) {
+            throw new CommandRegistrationException("Incorrect return type for command method " + commandMethod.getName() + " in " + commandClass.getClass().getName());
+        } else if (!Arrays.equals(commandMethod.getParameterTypes(), new Class<?>[]{CommandSender.class, String.class, String[].class})) {
+            throw new CommandRegistrationException("Incorrect arguments for command method " + commandMethod.getName() + " in " + commandClass.getClass().getName());
+        }
+
+        commandMethod.setAccessible(true);
     }
 
     public String getName() {
@@ -115,7 +121,7 @@ public class AnnotatedCommand {
             return parent.getCommandInstance(plugin);
         }
         if (pluginCommand == null) {
-            pluginCommand = new BukkitCommand(plugin);
+            pluginCommand = new BukkitCommand(plugin, this);
         }
         return pluginCommand;
     }
@@ -152,7 +158,6 @@ public class AnnotatedCommand {
             checkArgsLength(args);
 
             try {
-                commandMethod.setAccessible(true);
                 commandMethod.invoke(commandClass, sender, label, args);
             } catch (InvocationTargetException e) {
                 Throwable cause = e.getCause();
@@ -160,10 +165,12 @@ public class AnnotatedCommand {
                     throw (CommandException) cause;
                 }
                 throw new UnhandledCommandException(this.name, "Unhandled exception while invoking command method in " + this.commandClass + "#" + this.commandMethod.getName(), cause);
-            } catch (CommandException commandException) {
-                throw commandException;
             } catch (Throwable throwable) {
-                throw new UnhandledCommandException(this.name, "Unhandled exception in " + this.commandClass + "#" + this.commandMethod.getName(), throwable);
+                if (throwable instanceof CommandException) {
+                    throw (CommandException) throwable;
+                } else {
+                    throw new UnhandledCommandException(this.name, "Unhandled exception in " + this.commandClass + "#" + this.commandMethod.getName(), throwable);
+                }
             }
 
             return true;
@@ -255,6 +262,10 @@ public class AnnotatedCommand {
     }
 
     private void checkPermission(CommandSender sender) {
+        if (parent != null) {
+            //Require sender to have permission for the root/above command
+            parent.checkPermission(sender);
+        }
         boolean hasPermission = (permission == null || permission.isEmpty()) || sender.hasPermission(permission);
         if (!hasPermission) {
             throw new PermissionException(this.name, this.permission);
@@ -270,14 +281,6 @@ public class AnnotatedCommand {
         }
     }
 
-    private void validateCommandMethodArguments() {
-        if (!commandMethod.getReturnType().equals(Void.TYPE)) {
-            throw new CommandRegistrationException("Incorrect return type for command method " + commandMethod.getName() + " in " + commandClass.getClass().getName());
-        } else if (!Arrays.equals(commandMethod.getParameterTypes(), new Class<?>[]{CommandSender.class, String.class, String[].class})) {
-            throw new CommandRegistrationException("Incorrect arguments for command method " + commandMethod.getName() + " in " + commandClass.getClass().getName());
-        }
-    }
-
     private void checkSenderType(CommandSender sender) {
         Class<?>[] parameterTypes = commandMethod.getParameterTypes();
 
@@ -290,39 +293,30 @@ public class AnnotatedCommand {
         }
     }
 
-    private void validateCommandMethodArgumentCount() {
-        Class<?>[] parameterTypes = commandMethod.getParameterTypes();
-
-        if ((parameterTypes.length - 1/*Ignore the sender*/ < minArgs) || (maxArgs != -1 && parameterTypes.length - 1 > maxArgs)) {
-            throw new CommandException(this.name,
-                    "Parameter length of method '" + commandMethod.getName() + " in " + commandClass + " is not in the specified argument length range"
-            );
-
-        }
-    }
-
-    private class BukkitCommand extends org.bukkit.command.Command implements PluginIdentifiableCommand {
+    private static class BukkitCommand extends org.bukkit.command.Command implements PluginIdentifiableCommand {
 
         private final Plugin plugin;
+        private final AnnotatedCommand annotatedCommand;
 
-        protected BukkitCommand(Plugin plugin) {
+        protected BukkitCommand(Plugin plugin, AnnotatedCommand command) {
             super(
-                    AnnotatedCommand.this.name,
-                    AnnotatedCommand.this.description,
-                    AnnotatedCommand.this.usage,
-                    Arrays.asList(aliases)
+                    command.name,
+                    command.description,
+                    command.usage,
+                    Arrays.asList(command.aliases)
             );
             this.plugin = plugin;
+            this.annotatedCommand = command;
         }
 
         @Override
         public final boolean execute(CommandSender sender, String label, String[] args) {
-            return onCommand(sender, this, label, args);
+            return annotatedCommand.onCommand(sender, this, label, args);
         }
 
         @Override
         public final List<String> tabComplete(CommandSender sender, String label, String[] args) throws IllegalArgumentException {
-            return onTabComplete(sender, this, label, args);
+            return annotatedCommand.onTabComplete(sender, this, label, args);
         }
 
         @Override
@@ -334,7 +328,7 @@ public class AnnotatedCommand {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 53 * hash + Objects.hashCode(this.name);
+        hash = 53 * hash + this.name.hashCode();
         return hash;
     }
 
@@ -350,7 +344,7 @@ public class AnnotatedCommand {
             return false;
         }
         final AnnotatedCommand other = (AnnotatedCommand) obj;
-        return Objects.equals(this.name, other.name);
+        return this.name.equals(other.name);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.samistine.samistineutilities.features.physicsdisabler;
 
 import com.samistine.samistineutilities.api.SListener;
 import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPhysicsEvent;
@@ -25,13 +24,8 @@ final class JCPDListenerRegions implements SListener {
         return this.regions.containsKey(name);
     }
 
-    public boolean isInRegion(Location l) {
-        for (Map.Entry<String, JCPDRegion> e : this.regions.entrySet()) {
-            if (e.getValue().isInRegion(l)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isInRegion(Location loc) {
+        return this.regions.values().stream().anyMatch(e -> e.isInRegion(loc));//Parallelizable?
     }
 
     @EventHandler

@@ -25,6 +25,7 @@ package com.samistine.samistineutilities.utils.annotations.command;
 
 import com.samistine.samistineutilities.utils.annotations.command.backend.AnnotatedCommand;
 import com.samistine.samistineutilities.utils.annotations.command.handler.CommandErrorHandler;
+import java.util.Arrays;
 import java.util.Set;
 import org.bukkit.Server;
 import org.bukkit.command.CommandExecutor;
@@ -47,25 +48,59 @@ public class Test {
     void run() throws NoSuchMethodException {
         System.out.println("com.samistine.samistineutilities.utils.annotations.command3.Test.run()");
         AnnotatedCommand command = new AnnotatedCommand("test", new String[0], "/test", "A test command", "", this, this.getClass().getDeclaredMethod("testMethod", CommandSender.class, String.class, String[].class), 1, -1, CommandErrorHandler.FEEDBACK);
-        command.addSubcommand(new AnnotatedCommand("2", new String[0], "", "a subcommand", "", this.getClass(),
+        command.addSubcommand(new AnnotatedCommand("2", new String[0], "", "a subcommand", "", this,
                 this.getClass().getDeclaredMethod("testMethod2", CommandSender.class, String.class, String[].class),
                 0, 10, CommandErrorHandler.FEEDBACK));
+
         org.bukkit.command.Command cmd = command.getCommandInstance(null);
-        cmd.execute(exec, "test", new String[]{"1"});
-        cmd.execute(exec, "test", new String[]{"2"});
-        System.err.println(cmd.tabComplete(exec, "test", new String[]{"2", ""}));
+
+        do {
+            int length = 10000;
+            final long startTime = System.nanoTime();
+            for (int i = 0; i < 10000; i++) {//Warmup
+                cmd.execute(exec, "test", new String[]{"Main", "Command"});//Main Command
+            }
+            for (int i = 0; i < length; i++) {
+                final long startTime2 = System.nanoTime();
+                cmd.execute(exec, "test", new String[]{"Main", "Command"});//Main Command
+                final long endTime2 = System.nanoTime();
+                System.out.println("Execution time: " + (endTime2 - startTime2));
+            }
+            final long endTime = System.nanoTime();
+            System.out.println("Total execution time: " + (endTime - startTime));
+            System.out.println("Divided execution time: " + (endTime - startTime) / length);
+        } while (false);
+
+        do {
+            int length = 10000;
+            final long startTime = System.nanoTime();
+            for (int i = 0; i < 10000; i++) {//Warmup
+                cmd.execute(exec, "test", new String[]{"2", "A", "Subcommand"});//SubCommand
+            }
+            for (int i = 0; i < length; i++) {
+                final long startTime2 = System.nanoTime();
+                cmd.execute(exec, "test", new String[]{"2", "A", "Subcommand"});//SubCommand
+                final long endTime2 = System.nanoTime();
+                System.out.println("Execution time: " + (endTime2 - startTime2));
+            }
+            final long endTime = System.nanoTime();
+            System.out.println("Total execution time: " + (endTime - startTime));
+            System.out.println("Divided execution time: " + (endTime - startTime) / length);
+        } while (false);
+
+        System.out.println(cmd.tabComplete(exec, "test", new String[]{"2", ""})); //Tab Complete
     }
 
     @CommandTabCompletion(value = "a|b|c")
     void testMethod(CommandSender sender, String label, String[] args) {
-        System.out.println("com.samistine.samistineutilities.utils.annotations.command3.Test.testMethod()");
-        sender.sendMessage("Command Successfull" + args);
+        //System.out.println("com.samistine.samistineutilities.utils.annotations.command3.Test.testMethod()");
+        //sender.sendMessage("Command Successfull" + Arrays.toString(args));
     }
 
     @CommandTabCompletion(value = "1|2|3")
     void testMethod2(CommandSender sender, String label, String[] args) {
-        System.out.println("com.samistine.samistineutilities.utils.annotations.command3.Test.testMethod2()");
-        sender.sendMessage("Command Successfull" + args);
+        //System.out.println("com.samistine.samistineutilities.utils.annotations.command3.Test.testMethod2()");
+        //sender.sendMessage("Command Successfull" + Arrays.toString(args));
     }
 
     public static void main(String[] args) throws Exception {

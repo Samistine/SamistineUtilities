@@ -26,8 +26,6 @@ package com.samistine.samistineutilities.features;
 import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.api.SFeature;
 import com.samistine.samistineutilities.api.SListener;
-import com.samistine.samistineutilities.utils.annotations.config.ConfigPath;
-import com.samistine.samistineutilities.utils.annotations.config.ConfigPathProcessor;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,7 +34,6 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import java.util.logging.Level;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,9 +46,6 @@ import java.util.Iterator;
  * <blockquote>
  * <p>
  * This is a utility that allows server owners to disable rain.
- * <p>
- * This utility does not affect server performance if left disabled. It is
- * disabled by default in the configuration.</p>
  * </blockquote>
  * </div>
  *
@@ -71,14 +65,10 @@ import java.util.Iterator;
 @FeatureInfo(name = "NoRainFall", desc = "Stops rain in specified worlds")
 public final class NoRainFall extends SFeature {
 
-    @ConfigPath(path = "all_worlds")
-    boolean conf_all_worlds = false;
-
-    @ConfigPath(path = "worlds")
-    List<String> conf_worlds = Collections.emptyList();
+    private final boolean conf_all_worlds = this.getConfig().getBoolean("all_worlds", false);
+    private final List<String> conf_worlds = this.getConfig().getStringList("worlds");
 
     public NoRainFall() {
-        new ConfigPathProcessor(getLogger()).loadValues(getConfig(), this);
 
         if (!conf_all_worlds) {
             Iterator<String> it = conf_worlds.iterator();
