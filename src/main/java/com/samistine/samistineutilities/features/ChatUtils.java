@@ -27,10 +27,10 @@ import com.samistine.samistineutilities.api.SFeature;
 import com.samistine.samistineutilities.api.SListener;
 import com.samistine.samistineutilities.api.objects.FeatureInfo;
 import com.samistine.samistineutilities.utils.Pair;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -42,15 +42,17 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 @FeatureInfo(name = "ChatUtils", desc = "Various chat things")
 public final class ChatUtils extends SFeature implements SListener {
 
-    List<Pair<Pattern, String>> regexAndReplacements = new ArrayList<>();
+    private final List<Pair<Pattern, String>> regexAndReplacements;
 
     public ChatUtils() {
         Map<String, Object> values = getConfig().getConfigurationSection("Regex").getValues(false);
-        for (Map.Entry<String, Object> entry : values.entrySet()) {
-            Pattern pattern = Pattern.compile(entry.getKey());
-            String replacement = (String) entry.getValue();
-            regexAndReplacements.add(Pair.create(pattern, replacement));
-        }
+
+        regexAndReplacements = values.entrySet().parallelStream().map(entry -> {
+            return new Pair<>(
+                    Pattern.compile(entry.getKey()),
+                    (String) entry.getValue()
+            );
+        }).collect(Collectors.toList());
     }
 
     @EventHandler(priority = EventPriority.LOW)

@@ -6,6 +6,9 @@ import java.util.Objects;
  * Container to ease passing around a tuple of two objects. This object provides
  * a sensible implementation of equals(), returning true if equals() is true on
  * each of the contained objects.
+ *
+ * @param <F> first element's type
+ * @param <S> second element's type
  */
 public class Pair<F, S> {
 
@@ -48,18 +51,5 @@ public class Pair<F, S> {
     @Override
     public int hashCode() {
         return (first == null ? 0 : first.hashCode()) ^ (second == null ? 0 : second.hashCode());
-    }
-
-    /**
-     * Convenience method for creating an appropriately typed pair.
-     *
-     * @param a the first object in the Pair
-     * @param b the second object in the pair
-     * @param <A> type of the first object
-     * @param <B> type of the second object
-     * @return a Pair that is templatized with the types of a and b
-     */
-    public static <A, B> Pair<A, B> create(A a, B b) {
-        return new Pair<A, B>(a, b);
     }
 }

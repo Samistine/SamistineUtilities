@@ -27,8 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -39,7 +37,6 @@ public final class SamistineUtilities extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getCommand("utils").setExecutor(this);
         saveDefaultConfig();
         List<String> enabledFeature = getConfig().getStringList("EnabledFeatures");
         System.out.println(Arrays.toString(enabledFeature.toArray()));
@@ -76,21 +73,6 @@ public final class SamistineUtilities extends JavaPlugin {
 
     public static SamistineUtilities getInstance() {
         return getPlugin(SamistineUtilities.class);
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length > 0) {
-            switch (args[0].toLowerCase()) {
-                case "enable":
-                    onEnable();
-                    break;
-                case "disable":
-                    onDisable();
-                    break;
-            }
-        }
-        return true;
     }
 
 }

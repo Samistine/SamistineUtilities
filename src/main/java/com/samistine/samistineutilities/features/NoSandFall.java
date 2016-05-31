@@ -33,10 +33,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -69,49 +66,29 @@ import java.util.logging.Level;
  * @version 1.0
  */
 @FeatureInfo(name = "NoSandFall", desc = "Stops falling blocks in specified worlds")
-public final class NoSandFall extends SFeature {
+public final class NoSandFall extends SFeature implements SListener {
 
-    private final boolean conf_all_worlds = this.getConfig().getBoolean("all_worlds", false);
-    private final List<String> conf_worlds = this.getConfig().getStringList("worlds");
+    private final boolean conf_all_worlds;
+    private final HashSet<String> conf_worlds;
 
     public NoSandFall() {
+        conf_all_worlds = this.getConfig().getBoolean("all_worlds", false);
+        conf_worlds = new HashSet<>(this.getConfig().getStringList("worlds"));
 
         if (!conf_all_worlds) {
-            Iterator<String> it = conf_worlds.iterator();
-            while (it.hasNext()) {
-                String world_name = it.next();
-                if (getServer().getWorld(world_name) == null) {
-                    getLogger().log(Level.WARNING, "The world {0} was not found.", world_name);
-                    it.remove();
-                }
-            }
+            conf_worlds.stream()
+                    .filter(world -> getServer().getWorld(world) == null)
+                    .forEach(world -> getLogger().log(Level.WARNING, "The world {0} was not found.", world));
         }
 
-        new NSFListener(conf_all_worlds, new HashSet<>(conf_worlds)).registerListener(this);
-        getLogger().log(Level.FINE, "Loaded, Falling blocks are disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
+        getLogger().log(Level.FINE, "Falling blocks are disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
     }
 
-    /**
-     * The listener used by {@link NoSandFall} for blocking falling blocks.
-     *
-     * @author Samuel Seidel
-     */
-    private static class NSFListener implements SListener {
-
-        final boolean conf_all_worlds;
-        final Collection<String> conf_worlds;
-
-        NSFListener(boolean conf_all_worlds, Collection<String> conf_worlds) {
-            this.conf_all_worlds = conf_all_worlds;
-            this.conf_worlds = conf_worlds;
-        }
-
-        @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-        public void onFall(EntityChangeBlockEvent event) {
-            if (event.getEntityType() == EntityType.FALLING_BLOCK
-                    && (conf_all_worlds || conf_worlds.contains(event.getBlock().getWorld().getName()))) {
-                event.setCancelled(true);
-            }
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onFall(EntityChangeBlockEvent event) {
+        if (event.getEntityType() == EntityType.FALLING_BLOCK
+                && (conf_all_worlds || conf_worlds.contains(event.getBlock().getWorld().getName()))) {
+            event.setCancelled(true);
         }
     }
 

@@ -33,10 +33,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 
 import java.util.logging.Level;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * <h1>NoRainFall</h1>
@@ -63,49 +60,29 @@ import java.util.Iterator;
  * @version 1.0
  */
 @FeatureInfo(name = "NoRainFall", desc = "Stops rain in specified worlds")
-public final class NoRainFall extends SFeature {
+public final class NoRainFall extends SFeature implements SListener {
 
-    private final boolean conf_all_worlds = this.getConfig().getBoolean("all_worlds", false);
-    private final List<String> conf_worlds = this.getConfig().getStringList("worlds");
+    private final boolean conf_all_worlds;
+    private final HashSet<String> conf_worlds;
 
     public NoRainFall() {
+        conf_all_worlds = this.getConfig().getBoolean("all_worlds", false);
+        conf_worlds = new HashSet<>(this.getConfig().getStringList("worlds"));
 
         if (!conf_all_worlds) {
-            Iterator<String> it = conf_worlds.iterator();
-            while (it.hasNext()) {
-                String world_name = it.next();
-                if (getServer().getWorld(world_name) == null) {
-                    getLogger().log(Level.WARNING, "The world {0} was not found.", world_name);
-                    it.remove();
-                }
-            }
+            conf_worlds.stream()
+                    .filter(world -> getServer().getWorld(world) == null)
+                    .forEach(world -> getLogger().log(Level.WARNING, "The world {0} was not found.", world));
         }
 
-        new NRFListener(conf_all_worlds, new HashSet<>(conf_worlds)).registerListener(this);
-        getLogger().log(Level.FINE, "Loaded, Weather is disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
+        getLogger().log(Level.INFO, "Weather is disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
     }
 
-    /**
-     * The listener used by {@link NoRainFall} for blocking rain.
-     *
-     * @author Samuel Seidel
-     */
-    private static final class NRFListener implements SListener {
-
-        final boolean conf_all_worlds;
-        final Collection<String> conf_worlds;
-
-        NRFListener(boolean conf_all_worlds, Collection<String> conf_worlds) {
-            this.conf_all_worlds = conf_all_worlds;
-            this.conf_worlds = conf_worlds;
-        }
-
-        @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-        public void onRainStart(WeatherChangeEvent event) {
-            if (event.toWeatherState()
-                    && (conf_all_worlds || conf_worlds.contains(event.getWorld().getName()))) {
-                event.setCancelled(true);
-            }
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onRainStart(WeatherChangeEvent event) {
+        if (event.toWeatherState()
+                && (conf_all_worlds || conf_worlds.contains(event.getWorld().getName()))) {
+            event.setCancelled(true);
         }
     }
 

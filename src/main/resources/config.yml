@@ -47,7 +47,7 @@ ChatUtils: {
     Regex: {
         #Replaces non-english characters with an empty string
         '[^\x00-\x7F§]': '',
-        
+
         #Corrects all case forms of "cant" to "can't"
         '\b(c|C)(a|A)(n|N)(t|T)\b': '$1$2$3\''$4'
     }

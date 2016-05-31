@@ -28,10 +28,9 @@ public class TimeUtils {
      * @return time of @duration in a nice readable format
      */
     public static String millisToLongDHMS(long duration) {
-        StringBuffer res = new StringBuffer();
-        long temp = 0;
+        StringBuilder res = new StringBuilder();
         if (duration >= ONE_SECOND) {
-            temp = duration / ONE_DAY;
+            long temp = duration / ONE_DAY;
             if (temp > 0) {
                 duration -= temp * ONE_DAY;
                 res.append(temp).append(" day").append(temp > 1 ? "s" : "")

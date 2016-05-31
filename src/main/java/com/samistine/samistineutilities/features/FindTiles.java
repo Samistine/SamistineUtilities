@@ -62,7 +62,7 @@ public final class FindTiles extends SFeature implements SListener, SCommandExec
                     "SamistineUtilities.findtiles");
             Location loc = e.getChunk().getBlock(7, 100, 7).getLocation();
             if (!locs.values().stream().anyMatch(pair -> pair.first.equals(loc))) {
-                locs.put(System.currentTimeMillis(), Pair.create(loc, tileEntities));
+                locs.put(System.currentTimeMillis(), new Pair<>(loc, tileEntities));
             }
         }
     }

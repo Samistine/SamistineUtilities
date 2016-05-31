@@ -19,7 +19,3 @@ commands:
 #      usage: /findtiles
 #      permission: SamistineUtilities.findtiles
 #      permission-message: You don't have permission.
-
-  utils:
-      description: utils
-      usage: /utils
