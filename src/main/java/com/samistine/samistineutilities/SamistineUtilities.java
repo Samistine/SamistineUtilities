@@ -38,13 +38,11 @@ public final class SamistineUtilities extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        List<String> enabledFeature = getConfig().getStringList("EnabledFeatures");
-        System.out.println(Arrays.toString(enabledFeature.toArray()));
 
         for (Features feature : Features.values()) {
             getLogger().log(Level.FINE, "Loading {0}", feature.getName());
             SFeatureWrapper wrapper = feature.getFeatureWrapper();
-            if (enabledFeature.contains(wrapper.getName())) {
+            if (getConfig().isConfigurationSection(wrapper.getName())) {
                 wrapper.enable();
             }
         }

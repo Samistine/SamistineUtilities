@@ -11,16 +11,11 @@
 #       | |__| | | |_  | | | | | | | |_  | | |  __/ \__ \        #
 #        \____/   \__| |_| |_| |_|  \__| |_|  \___| |___/        #
 
-#Remove/add features to disable/enable them respectfully
-EnabledFeatures: [
-    #NoSandFall,
-    #NoRainFall,
-    #ChatUtils,
-    PhysicsDisabler,
-    FindTiles
-]
+#Commenting out a feature disabled it. Uncomment a block if you wish to enable it.
 
-######NoSandFall######
+PhysicsDisabler: {}
+FindTiles: {}
+
 NoSandFall: {
     all_worlds: true,
     worlds: [
@@ -30,7 +25,6 @@ NoSandFall: {
     ]
 }
 
-######NoRainFall######
 NoRainFall: {
     all_worlds: true,
     worlds: [
@@ -40,7 +34,6 @@ NoRainFall: {
     ]
 }
 
-######ChatUtils######
 ChatUtils: {
 
     #See http://www.regexr.com/
@@ -52,4 +45,30 @@ ChatUtils: {
         '\b(c|C)(a|A)(n|N)(t|T)\b': '$1$2$3\''$4'
     }
 
+}
+
+PermissionUtils: {
+
+    PermissionsOverride: {
+        #Override a command's error message recieved when you lack a permission
+        #This is useful for individual servers where you can specify what rank is needed for this command
+        #However this only works for specific plugins, please checkout the block below this one if this doesn't work for you
+        PluginYML: {
+            #'op': 'You must be a superhero to execute this command',
+            #'tp': 'You must be a superhero to execute this command'
+        },
+    
+        #This tracks commands issued, if the command is issued and the player doesn't have the permission specified here it will cancel the command and send them the error(no-permission) message
+        Tracking: {
+            op: {
+                permission: 'minecraft.command.op',
+                permission-message: 'You must be a superhero to execute this command'
+            },
+            tp: {
+                permission: 'minecraft.command.tp',
+                permission-message: 'You must be a superhero to execute this command'
+            }
+        }
+    }
+    
 }

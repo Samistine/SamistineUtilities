@@ -28,6 +28,7 @@ import com.samistine.samistineutilities.features.ChatUtils;
 import com.samistine.samistineutilities.features.FindTiles;
 import com.samistine.samistineutilities.features.NoRainFall;
 import com.samistine.samistineutilities.features.NoSandFall;
+import com.samistine.samistineutilities.features.permissionutils.PermissionUtils;
 import com.samistine.samistineutilities.features.physicsdisabler.JCPhysicsDisabler;
 
 /**
@@ -39,7 +40,8 @@ public enum Features {
     NoRainFall("NoRainFall", NoRainFall.class),
     FindTiles("FindTiles", FindTiles.class),
     DisablePhysics("DisablePhysics", JCPhysicsDisabler.class),
-    ChatUtils("ChatUtils", ChatUtils.class);
+    ChatUtils("ChatUtils", ChatUtils.class),
+    PermissionUtils("PermissionUtils", PermissionUtils.class);
 
     private final String name;
     private final SFeatureWrapper featureWrapper;

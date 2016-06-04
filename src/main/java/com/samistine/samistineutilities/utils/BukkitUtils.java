@@ -25,9 +25,14 @@ package com.samistine.samistineutilities.utils;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.help.GenericCommandHelpTopic;
 import org.bukkit.help.HelpTopic;
 
@@ -62,4 +67,10 @@ public class BukkitUtils {
         }
     }
 
+    public static Map<String, String> configSectionStringValues(ConfigurationSection section) {
+        Map<String, Object> values = section.getValues(false);
+        return values.entrySet().stream()
+                .filter(entry -> entry.getValue() instanceof String)
+                .collect(Collectors.toMap(Entry::getKey, entry -> (String) entry.getValue()));
+    }
 }
