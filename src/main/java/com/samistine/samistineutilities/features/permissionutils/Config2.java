@@ -29,10 +29,12 @@ package com.samistine.samistineutilities.features.permissionutils;
  */
 final class Config2 {
 
+    final String command;
     final String permission;
     final String permission_message;
 
-    public Config2(String permission, String permission_message) {
+    public Config2(String command, String permission, String permission_message) {
+        this.command = command;
         this.permission = permission;
         this.permission_message = permission_message;
     }

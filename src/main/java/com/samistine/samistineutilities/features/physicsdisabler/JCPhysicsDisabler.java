@@ -23,8 +23,10 @@
  */
 package com.samistine.samistineutilities.features.physicsdisabler;
 
+import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.api.SFeature;
-import com.samistine.samistineutilities.api.objects.FeatureInfo;
+import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.PluginManager;
 
 /**
  * <h1>PhysicsDisabler</h1>
@@ -72,37 +74,71 @@ import com.samistine.samistineutilities.api.objects.FeatureInfo;
  * @author Jasper Nalbach
  * @version 1.2
  */
-@FeatureInfo(name = "PhysicsDisabler", desc = "Block title entities from ticking in specific/all places", commands = "/disablephysics")
+//@FeatureInfo(name = "PhysicsDisabler", desc = "Block title entities from ticking in specific/all places", commands = "/disablephysics")
 public final class JCPhysicsDisabler extends SFeature {
 
-    private final JCPDListenerSimple listener = new JCPDListenerSimple();
-    private final JCPDListenerRegions listener2 = new JCPDListenerRegions();
+    private final JCPDCommandExecutor command = new JCPDCommandExecutor(this);
+    private final JCPDListenerSimple listenerSimple = new JCPDListenerSimple();
+    private final JCPDListenerRegions listenerRegions = new JCPDListenerRegions();
 
-    public JCPhysicsDisabler() {
-        //Register Command
-        new JCPDCommandExecutor(this).registerCommand(this);
+    public JCPhysicsDisabler(SamistineUtilities main) {
+        super(main,
+                "PhysicsDisabler",
+                "Block title entities from ticking in specific/all places"
+        );
     }
 
-    public void setDisabled(int i) {
-        listener.unregisterListener(this);
-        listener2.unregisterListener(this);
+    @Override
+    protected void onEnable() {
+        //Register Command
+        registerCommand(command);
+    }
 
-        if (i == 1) {
-            listener.registerListener(this);
-        } else if (i == 2) {
-            listener2.registerListener(this);
+    @Override
+    protected void onDisable() {
+        //UNRegister Command
+        unregisterCommand(command);
+    }
+
+    /**
+     * Sets the mode.
+     * <ul>
+     * <li>0 - Allow all physics updates</li>
+     * <li>1 - Block all physics updates</li>
+     * <li>2 - Block physics updates in registered regions</li>
+     * </ul>
+     *
+     * @param i
+     */
+    public void setMode(int i) {
+        HandlerList.unregisterAll(listenerSimple);
+        HandlerList.unregisterAll(listenerRegions);
+
+        PluginManager plm = getServer().getPluginManager();
+        switch (i) {
+            case 0:
+                break;
+            case 1:
+                plm.registerEvents(listenerSimple, featurePlugin);
+                break;
+            case 2:
+                plm.registerEvents(listenerRegions, featurePlugin);
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
     public void addRegion(String name, JCPDRegion region) {
-        listener2.addRegion(name, region);
+        listenerRegions.addRegion(name, region);
     }
 
     public void removeRegion(String name) {
-        listener2.removeRegion(name);
+        listenerRegions.removeRegion(name);
     }
 
     public boolean existsRegion(String name) {
-        return listener2.existsRegion(name);
+        return listenerRegions.existsRegion(name);
     }
+
 }

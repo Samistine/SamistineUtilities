@@ -39,24 +39,23 @@ public enum Features {
     NoSandFall("NoSandFall", NoSandFall.class),
     NoRainFall("NoRainFall", NoRainFall.class),
     FindTiles("FindTiles", FindTiles.class),
-    DisablePhysics("DisablePhysics", JCPhysicsDisabler.class),
-    ChatUtils("ChatUtils", ChatUtils.class),
-    PermissionUtils("PermissionUtils", PermissionUtils.class);
+    PhysicsDisabler("PhysicsDisabler", JCPhysicsDisabler.class),
+    ChatUtils("ChatUtils", ChatUtils.class), /*PermissionUtils("PermissionUtils", PermissionUtils.class)*/;
 
     private final String name;
-    private final SFeatureWrapper featureWrapper;
+    private final Class<? extends SFeature> clazz;
 
     private Features(String name, Class<? extends SFeature> clazz) {
         this.name = name;
-        this.featureWrapper = new SFeatureWrapper<>(clazz);
+        this.clazz = clazz;
     }
 
     public String getName() {
         return name;
     }
 
-    public SFeatureWrapper getFeatureWrapper() {
-        return featureWrapper;
+    public Class<? extends SFeature> getClazz() {
+        return clazz;
     }
 
 }

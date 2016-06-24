@@ -23,13 +23,16 @@
  */
 package com.samistine.samistineutilities.features.permissionutils;
 
+import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.api.SFeature;
-import com.samistine.samistineutilities.api.SListener;
-import com.samistine.samistineutilities.api.objects.FeatureInfo;
+import com.samistine.samistineutilities.api.FeatureInfo;
 import com.samistine.samistineutilities.utils.BukkitUtils;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,6 +40,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 /**
@@ -44,11 +48,22 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
  * @author Samuel Seidel
  */
 @FeatureInfo(name = "PermissionUtils", desc = "Useful utilities related to permissions")
-public final class PermissionUtils extends SFeature implements SListener {
+public final class PermissionUtils extends SFeature implements Listener {
 
-    private final Map<String, Config2> trackingMap = new HashMap<>();
+    private final List<Config2> trackingList = new ArrayList<>();
 
-    public PermissionUtils() {
+    @Override
+    protected void onDisable() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected void onEnable() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public PermissionUtils(SamistineUtilities main) {
+        super(main, "PermissionUtils", "Useful utilities related to permissions");
         getLogger().setLevel(Level.ALL);
         //Override default permission messages with custom specified ones
         ConfigurationSection permOverrides = getConfig().getConfigurationSection("PermissionsOverride");
@@ -68,7 +83,7 @@ public final class PermissionUtils extends SFeature implements SListener {
                     String permission_message = ChatColor.translateAlternateColorCodes('&', tracking.getString(command + ".permission-message"));
                     if (permission != null && permission_message != null) {
                         getLogger().log(Level.FINE, "Tracking command for player permission message, command={0}", command);
-                        trackingMap.put(command, new Config2(permission, permission_message));
+                        trackingList.add(new Config2(command, permission, permission_message));
                     }
                 }
             }
@@ -91,17 +106,22 @@ public final class PermissionUtils extends SFeature implements SListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
-        String[] commandAndArgs = event.getMessage().substring(1).split(" ", 2);
-
-        String command = commandAndArgs[0];
-        String[] args = commandAndArgs.length > 1 ? commandAndArgs[1].split(" ") : null;
-        Config2 c2 = trackingMap.get(command);
-
-        if (c2 != null && !event.getPlayer().hasPermission(c2.permission)) {
-            String message = MessageFormat.format(c2.permission_message, command, args != null ? String.join(" ", args) : null);
-            event.getPlayer().sendMessage(message);
-            event.setCancelled(true);
-        }
+//        String base = event.getMessage().substring(1);
+//        Optional<Config2> c2 = trackingList.stream().map(Config2::trackingList).filter(tracking -> base.startsWith(tracking.command)).findFirst();
+//        
+//        if (c2.isPresent()) {
+//            String matched = c2.get()
+//        }
+//
+//        String[] commandAndArgs = base.split(" ", 2);
+//        String command = commandAndArgs[0];
+//        String[] args = commandAndArgs.length > 1 ? commandAndArgs[1].split(" ") : null;
+//
+//        if (c2 != null && !event.getPlayer().hasPermission(c2.permission)) {
+//            String message = MessageFormat.format(c2.permission_message, command, args != null ? String.join(" ", args) : null);
+//            event.getPlayer().sendMessage(message);
+//            event.setCancelled(true);
+//        }
     }
 
 }

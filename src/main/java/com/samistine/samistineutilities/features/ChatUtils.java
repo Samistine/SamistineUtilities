@@ -23,50 +23,97 @@
  */
 package com.samistine.samistineutilities.features;
 
+import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.api.SFeature;
-import com.samistine.samistineutilities.api.SListener;
-import com.samistine.samistineutilities.api.objects.FeatureInfo;
-import com.samistine.samistineutilities.utils.Pair;
+import com.samistine.samistineutilities.utils.BukkitUtils;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.event.Listener;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.plugin.PluginManager;
 
 /**
  *
  * @author Samuel Seidel
  */
-@FeatureInfo(name = "ChatUtils", desc = "Various chat things")
-public final class ChatUtils extends SFeature implements SListener {
+//@FeatureInfo(name = "ChatUtils", desc = "Various chat things")
+public final class ChatUtils extends SFeature {
 
-    private final List<Pair<Pattern, String>> regexAndReplacements;
+    public ChatUtils(SamistineUtilities main) {
+        super(main,
+                "ChatUtils",
+                "Various chat things"
+        );
+    }
 
-    public ChatUtils() {
-        Map<String, Object> values = getConfig().getConfigurationSection("Regex").getValues(false);
+    private final List<Listener> registeredListeners = new ArrayList<>(1);
 
-        regexAndReplacements = values.entrySet().parallelStream().map(entry -> {
-            return new Pair<>(
-                    Pattern.compile(entry.getKey()),
-                    (String) entry.getValue()
-            );
-        }).collect(Collectors.toList());
+    @Override
+    protected void onEnable() {
+        PluginManager pm = getServer().getPluginManager();
+
+        ConfigurationSection configRegex = getConfig().getConfigurationSection("Regex");
+        if (configRegex != null) {
+            Map<String, String> values = BukkitUtils.configSectionStringValues(configRegex);
+
+            List<RegexRepl> regexAndReplacements = values.entrySet().parallelStream().map(entry -> {
+                return new RegexRepl(
+                        Pattern.compile(entry.getKey()),
+                        (String) entry.getValue()
+                );
+            }).collect(Collectors.toList());
+
+            getLogger().log(Level.INFO, "Loaded {0} regex statements.", regexAndReplacements.size());
+            Listener regexListener = new RegexListener(regexAndReplacements);
+            registeredListeners.add(regexListener);
+            pm.registerEvents(regexListener, featurePlugin);
+        }
+
+    }
+
+    @Override
+    protected void onDisable() {
+        registeredListeners.forEach(HandlerList::unregisterAll);
+    }
+
+}
+
+class RegexListener implements Listener {
+
+    final List<RegexRepl> regexAndReplacements;
+
+    RegexListener(List<RegexRepl> regexAndReplacements) {
+        this.regexAndReplacements = regexAndReplacements;
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void regex(AsyncPlayerChatEvent event) {
+    void regex(AsyncPlayerChatEvent event) {
         String msg = event.getMessage();
 
-        for (Pair<Pattern, String> regexAndReplacement : regexAndReplacements) {
-            Pattern pattern = regexAndReplacement.first;
-            String replacement = regexAndReplacement.second;
-
-            msg = pattern.matcher(msg).replaceAll(replacement);
+        for (RegexRepl regex : regexAndReplacements) {
+            msg = regex.pattern.matcher(msg).replaceAll(regex.replacement);
         }
 
         event.setMessage(msg);
+    }
+}
+
+class RegexRepl {
+
+    final Pattern pattern;
+    final String replacement;
+
+    RegexRepl(Pattern regexPattern, String regexReplacement) {
+        this.pattern = regexPattern;
+        this.replacement = regexReplacement;
     }
 
 }

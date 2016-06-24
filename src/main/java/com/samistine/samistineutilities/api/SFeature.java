@@ -23,157 +23,150 @@
  */
 package com.samistine.samistineutilities.api;
 
-import com.samistine.samistineutilities.api.objects.FeatureInfo;
-import com.samistine.samistineutilities.api.objects.FeatureLogger;
 import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.utils.annotations.command.backend.CommandManager;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.Validate;
+
 import org.bukkit.Server;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.HandlerList;
 
 /**
  *
  * @author Samuel Seidel
  */
-public abstract class SFeature implements Feature {
+public abstract class SFeature {
 
-    private final String name;
-    private final String desc;
-    private final Logger logger;
+    protected final SamistineUtilities featurePlugin;
+    protected final Server featureServer;
+    protected final String featureName;
+    protected final String featureDesc;
+    protected final Logger featureLogger;
 
-    {
-        FeatureInfo annotation = getClass().getAnnotation(FeatureInfo.class);
-        Validate.notNull(annotation, "Implementing class must contain FeatureInfo anotation");
-        this.name = annotation.name();
-        this.desc = annotation.desc();
-        this.logger = new FeatureLogger(this);
-        this.logger.setLevel(Level.ALL);
+    public SFeature(SamistineUtilities plugin, String name, String description) {
+        this.featurePlugin = plugin;
+        this.featureServer = plugin.getServer();
+        this.featureName = name;
+        this.featureDesc = description;
+        this.featureLogger = new FeatureLogger(this);
     }
 
-    @Override
-    public final String getName() {
-        return name;
+    private boolean running;
+
+    void start() {
+        if (isRunning()) {
+            throw new AlreadyStartedException(featureName + " is already running.");
+        } else if (shouldEnable()) {
+            featureLogger.log(Level.FINE, "Enabling");
+            onEnable();
+            featureLogger.log(Level.INFO, "Enabled");
+            running = true;
+        }
     }
 
-    @Override
-    public final String getDesc() {
-        return desc;
+    void stop() {
+        if (isRunning()) {
+            featureLogger.log(Level.FINE, "Disabling");
+            onDisable();
+            featureLogger.log(Level.INFO, "Disabled");
+            running = false;
+        }
     }
 
-    @Override
-    public final Logger getLogger() {
-        return logger;
+    protected abstract void onEnable();
+
+    protected abstract void onDisable();
+
+    protected boolean shouldEnable() {
+        return getRootConfig().get(featureName, null) != null;
     }
 
-    @Override
-    public final Server getServer() {
-        return getRootPlugin().getServer();
+    protected ConfigurationSection getConfig() {
+        return getRootConfig().getConfigurationSection(featureName);
     }
 
-    @Override
-    public final SamistineUtilities getRootPlugin() {
-        return SamistineUtilities.getInstance();
-    }
-
-    @Override
-    public final FileConfiguration getRootConfig() {
-        return getRootPlugin().getConfig();
+    public boolean isRunning() {
+        return running;
     }
 
     /**
-     * The configuration section for this feature
+     * The name of this feature
+     *
+     * @return name
+     */
+    public final String getName() {
+        return featureName;
+    }
+
+    /**
+     * A short one-to-two liner description about this feature
+     *
+     * @return description
+     */
+    public final String getDesc() {
+        return featureDesc;
+    }
+
+    /**
+     * Gets the logger for the feature.
+     * <p>
+     * This logger contains this feature's {@link #getName() name} to assist in
+     * debugging.
+     *
+     * @return logger
+     */
+    public final Logger getLogger() {
+        return featureLogger;
+    }
+
+    /**
+     * Gets the running server.
+     *
+     * @return server
+     */
+    public final Server getServer() {
+        return featureServer;
+    }
+
+    /**
+     * Get the plugin that this feature is running under
+     *
+     * @return plugin
+     */
+    public final SamistineUtilities getRootPlugin() {
+        return featurePlugin;
+    }
+
+    /**
+     * Gets the {@link SamistineUtilities plugin}'s root/main config.
      *
      * @return config
      */
-    public final ConfigurationSection getConfig() {
-        ConfigurationSection section = getRootConfig().getConfigurationSection(name);
-        Validate.notNull(section);
-        return section;
-    }
-
-    public final void enable() {
-        logger.log(Level.FINE, "{0}.enable()", getClass().getName());
-        if (this instanceof SListener) {//Auto register main class if it implements listener
-            ((SListener) this).registerListener(this);
-        }
-        if (this instanceof SCommandExecutor) {
-            ((SCommandExecutor) this).registerCommand(this);
-        }
-
-        logger.log(Level.FINE, "Enabled");
+    public final FileConfiguration getRootConfig() {
+        return featurePlugin.getConfig();
     }
 
     /**
-     * This method can only be called a single time.
+     * Gets the command with the given name, specific to this plugin. Commands
+     * need to be registered in the {@link PluginDescriptionFile#getCommands()
+     * PluginDescriptionFile} to exist at runtime.
+     *
+     * @param name name or alias of the command
+     * @return the plugin command if found, otherwise null
      */
-    public final void disable() {
-        logger.log(Level.FINE, "{0}.disable()", getClass().getName());
-        onDisable();
-        listeners.forEach(HandlerList::unregisterAll);
-        listeners.clear();
-        commands.forEach(getCommandManager()::unRegisterCommandExecutor);
-        commands.clear();
-        logger.log(Level.FINE, "Disabled");
+    protected final PluginCommand getCommand(String name) {
+        return featurePlugin.getCommand(name);
     }
 
-    /**
-     * Called when the feature is being disabled, but before anything else takes
-     * place.
-     * <br>
-     */
-    protected void onDisable() {
+    protected final void registerCommand(Object command) {
+        getCommandManager().registerCommandExecutor(command);
     }
 
-    //
-    //
-    //
-    //Begin Event/Command Methods & Fields
-    //
-    //
-    //
-    private final List<SListener> listeners = new ArrayList<>();
-    private final List<SCommandExecutor> commands = new ArrayList<>();
-
-    protected final void registerListener(SListener listener) {
-        if (!listeners.contains(listener)) {
-            getServer().getPluginManager().registerEvents(listener, getRootPlugin());
-            listeners.add(listener);
-        } else {
-            //The listener was already registed
-        }
-    }
-
-    protected final void unregisterListener(SListener listener) {
-        if (listeners.contains(listener)) {
-            HandlerList.unregisterAll(listener);
-            listeners.remove(listener);
-        } else {
-            //The listener was not registered
-        }
-    }
-
-    protected final void registerCommand(SCommandExecutor command) {
-        if (!commands.contains(command)) {
-            getCommandManager().registerCommandExecutor(command);
-            commands.add(command);
-        } else {
-            //The listener has already been registered by this feature
-        }
-    }
-
-    protected final void unregisterCommand(SCommandExecutor command) {
-        if (commands.contains(command)) {
-            getCommandManager().unRegisterCommandExecutor(command);
-            commands.remove(command);
-        } else {
-            //The listener is not registered
-        }
+    protected final void unregisterCommand(Object command) {
+        getCommandManager().unRegisterCommandExecutor(command);
     }
 
     private CommandManager cm;
@@ -184,5 +177,4 @@ public abstract class SFeature implements Feature {
         }
         return cm;
     }
-
 }

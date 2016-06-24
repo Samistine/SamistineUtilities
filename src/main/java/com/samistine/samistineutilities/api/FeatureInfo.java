@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Samuel.
+ * Copyright 2016 Samuel Seidel.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,40 @@
  */
 package com.samistine.samistineutilities.api;
 
-import org.bukkit.event.Listener;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
- * @author Samuel
+ * @author Samuel Seidel
  */
-public interface SListener extends Listener {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface FeatureInfo {
 
     /**
-     * Register this instance to the server's event handling backend.
+     * The name of this utility
      *
-     * @param <T> this
-     * @param feature the feature to register this listener to
-     * @return this for easy chaining
+     * @return name
      */
-    public default <T extends SListener> T registerListener(SFeature feature) {
-        feature.registerListener(this);
-        return (T) this;
-    }
+    public String name();
 
     /**
-     * Un-register this instance from the server's event handling backend.
+     * A short one-to-two liner description about this utility
      *
-     * @param <T> this
-     * @param feature the feature that owns this listener
-     * @return this for easy chaining
+     * @return description
      */
-    public default <T extends SListener> T unregisterListener(SFeature feature) {
-        feature.unregisterListener(this);
-        return (T) this;
-    }
+    public String desc();
 
+    /**
+     * Gets the commands this method can handle
+     * <p>
+     * Please specify commands here in your implementation.
+     * </p>
+     *
+     * @return commands used by this utility
+     */
+    public String[] commands() default {};
 }

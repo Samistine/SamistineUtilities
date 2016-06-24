@@ -23,18 +23,19 @@
  */
 package com.samistine.samistineutilities.features;
 
-import com.samistine.samistineutilities.api.objects.FeatureInfo;
+import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.api.SFeature;
-import com.samistine.samistineutilities.api.SListener;
 
-import org.bukkit.entity.EntityType;
+import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.entity.EntityType;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Level;
+import org.bukkit.event.HandlerList;
 
 /**
  * <h1>NoSandFall</h1>
@@ -65,13 +66,21 @@ import java.util.logging.Level;
  * @author Samuel Seidel
  * @version 1.0
  */
-@FeatureInfo(name = "NoSandFall", desc = "Stops falling blocks in specified worlds")
-public final class NoSandFall extends SFeature implements SListener {
+//@FeatureInfo(name = "NoSandFall", desc = "Stops falling blocks in specified worlds")
+public final class NoSandFall extends SFeature implements Listener {
 
-    private final boolean conf_all_worlds;
-    private final HashSet<String> conf_worlds;
+    public NoSandFall(SamistineUtilities main) {
+        super(main,
+                "NoSandFall",
+                "Stops falling blocks in specified worlds"
+        );
+    }
 
-    public NoSandFall() {
+    private boolean conf_all_worlds;
+    private HashSet<String> conf_worlds;
+
+    @Override
+    protected void onEnable() {
         conf_all_worlds = this.getConfig().getBoolean("all_worlds", false);
         conf_worlds = new HashSet<>(this.getConfig().getStringList("worlds"));
 
@@ -81,11 +90,17 @@ public final class NoSandFall extends SFeature implements SListener {
                     .forEach(world -> getLogger().log(Level.WARNING, "The world {0} was not found.", world));
         }
 
-        getLogger().log(Level.FINE, "Falling blocks are disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
+        getServer().getPluginManager().registerEvents(this, featurePlugin);
+        getLogger().log(Level.INFO, "Falling blocks are disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
+    }
+
+    @Override
+    protected void onDisable() {
+        HandlerList.unregisterAll(this);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onFall(EntityChangeBlockEvent event) {
+    protected void onFall(EntityChangeBlockEvent event) {
         if (event.getEntityType() == EntityType.FALLING_BLOCK
                 && (conf_all_worlds || conf_worlds.contains(event.getBlock().getWorld().getName()))) {
             event.setCancelled(true);

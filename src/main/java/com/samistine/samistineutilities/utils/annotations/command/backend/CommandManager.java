@@ -1,7 +1,6 @@
 package com.samistine.samistineutilities.utils.annotations.command.backend;
 
 import com.samistine.samistineutilities.utils.annotations.command.handler.CommandErrorHandler;
-import com.samistine.samistineutilities.api.SCommandExecutor;
 import com.samistine.samistineutilities.utils.BukkitUtils;
 import java.lang.reflect.Method;
 
@@ -16,7 +15,6 @@ import com.samistine.samistineutilities.utils.annotations.command.exception.Comm
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +26,7 @@ import java.util.logging.Logger;
 public final class CommandManager {
 
     private final Plugin plugin;
-    private final Map<SCommandExecutor, AnnotatedCommand> mappings = new HashMap<>();
+    private final Map<Object, AnnotatedCommand> mappings = new HashMap<>();
 
     private CommandMap commandMap;
 
@@ -51,9 +49,9 @@ public final class CommandManager {
      * @param executor	The command executor to register.
      * @throws	CommandRegistrationException if the registration fails
      */
-    public void registerCommandExecutor(SCommandExecutor executor) {
+    public void registerCommandExecutor(Object executor) {
         @SuppressWarnings("unchecked")
-        Class<SCommandExecutor> cls = (Class<SCommandExecutor>) executor.getClass();
+        Class<? extends Object> cls = (Class<? extends Object>) executor.getClass();
 
         final Map<String, AnnotatedCommand> tempMap = new HashMap<>();
 
@@ -160,7 +158,7 @@ public final class CommandManager {
     }
 
     //TODO: Add error handling
-    public void unRegisterCommandExecutor(SCommandExecutor executor) {
+    public void unRegisterCommandExecutor(Object executor) {
         AnnotatedCommand aCommand = mappings.get(executor);
         org.bukkit.command.Command pluginCommand = aCommand.getCommandInstance(plugin);
         unRegisterCommand(pluginCommand);

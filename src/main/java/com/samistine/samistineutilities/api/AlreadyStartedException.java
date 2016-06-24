@@ -21,42 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.samistine.samistineutilities.api.objects;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.samistine.samistineutilities.api;
 
 /**
  *
  * @author Samuel Seidel
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface FeatureInfo {
+public class AlreadyStartedException extends RuntimeException {
 
     /**
-     * The name of this utility
-     *
-     * @return name
+     * Creates a new instance of <code>AlreadyStartedException</code> without
+     * detail message.
      */
-    public String name();
+    public AlreadyStartedException() {
+    }
 
     /**
-     * A short one-to-two liner description about this utility
+     * Constructs an instance of <code>AlreadyStartedException</code> with the
+     * specified detail message.
      *
-     * @return description
+     * @param msg the detail message.
      */
-    public String desc();
-
-    /**
-     * Gets the commands this method can handle
-     * <p>
-     * Please specify commands here in your implementation.
-     * </p>
-     *
-     * @return commands used by this utility
-     */
-    public String[] commands() default {};
+    public AlreadyStartedException(String msg) {
+        super(msg);
+    }
 }

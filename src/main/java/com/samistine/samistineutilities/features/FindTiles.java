@@ -24,10 +24,8 @@
 package com.samistine.samistineutilities.features;
 
 import com.dictiography.collections.IndexedTreeMap;
-import com.samistine.samistineutilities.api.SCommandExecutor;
-import com.samistine.samistineutilities.api.objects.FeatureInfo;
+import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.api.SFeature;
-import com.samistine.samistineutilities.api.SListener;
 import com.samistine.samistineutilities.utils.Pair;
 import com.samistine.samistineutilities.utils.TimeUtils;
 import java.text.MessageFormat;
@@ -42,18 +40,42 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import com.samistine.samistineutilities.utils.annotations.command.Command;
 import com.samistine.samistineutilities.utils.annotations.command.CommandTabCompletion;
 import com.samistine.samistineutilities.utils.annotations.command.SubCommand;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
 /**
  *
  * @author Samuel Seidel
  */
-@FeatureInfo(name = "FindTiles", desc = "Find laggy chunks", commands = "/findtiles")
-public final class FindTiles extends SFeature implements SListener, SCommandExecutor {
+//@FeatureInfo(name = "FindTiles", desc = "Find laggy chunks", commands = "/findtiles")
+public final class FindTiles extends SFeature implements Listener {
 
-    IndexedTreeMap<Long, Pair<Location, Integer>> locs = new IndexedTreeMap<>();
+    public FindTiles(SamistineUtilities main) {
+        super(main,
+                "FindTiles",
+                "Find laggy chunks"
+        );
+    }
 
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent e) {
+    private IndexedTreeMap<Long, Pair<Location, Integer>> locs;
+
+    @Override
+    protected void onEnable() {
+        locs = new IndexedTreeMap<>();
+        registerCommand(this);
+        getServer().getPluginManager().registerEvents(this, featurePlugin);
+    }
+
+    @Override
+    protected void onDisable() {
+        HandlerList.unregisterAll(this);
+        unregisterCommand(this);
+        locs.clear();
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    protected void onChunkLoad(ChunkLoadEvent e) {
         int tileEntities = e.getChunk().getTileEntities().length;
         if (tileEntities > 500) {
             getLogger().log(Level.WARNING, "{0} Tile Entities detected at x:{1} z:{2}", new Object[]{e.getChunk().getX(), e.getChunk().getZ()});
@@ -69,7 +91,7 @@ public final class FindTiles extends SFeature implements SListener, SCommandExec
 
     @Command(name = "findtiles", description = "Find chunks that may contain too many tile entities", usage = "[ list | tp (number) ]")
     @CommandTabCompletion("list|tp")
-    public void findTilesCommand(CommandSender sender, String label, String[] args) {
+    protected void findTilesCommand(CommandSender sender, String label, String[] args) {
         sender.sendMessage("/findtiles list   List laggy chunks");
         sender.sendMessage("/findtiles tp     TP to last laggy chunk");
     }
@@ -78,7 +100,7 @@ public final class FindTiles extends SFeature implements SListener, SCommandExec
             parent = "findtiles",
             name = "list",
             description = "List locations where too many entities were previously detected")
-    public void findTilesTPCommand(CommandSender sender, String label, String[] args) {
+    protected void findTilesTPCommand(CommandSender sender, String label, String[] args) {
         sender.sendMessage(ChatColor.GOLD + "List with no duplicates");
         int i = 0;
         for (Map.Entry<Long, Pair<Location, Integer>> entry : locs.entrySet()) {
@@ -93,15 +115,14 @@ public final class FindTiles extends SFeature implements SListener, SCommandExec
             name = "tp",
             usage = "(number)", min = 1,
             description = "Teleport to a location where too many entities have previously been detected")
-    public void findTilesListCommand(CommandSender sender, String label, String[] args) {
+    protected void findTilesListCommand(CommandSender sender, String label, String[] args) {
         try {
-            int number = Integer.parseInt(args[0]);
-            Map.Entry<Long, Pair<Location, Integer>> entry = locs.exactEntry(number);
+            Map.Entry<Long, Pair<Location, Integer>> entry = locs.exactEntry(Integer.parseInt(args[0]));
             String msg = MessageFormat.format("{0} Tile Entities detected here {1} ago", entry.getValue().second, TimeUtils.millisToLongDHMS(System.currentTimeMillis() - entry.getKey()));
             sender.sendMessage(msg);
-            if (sender instanceof Player) {
-                ((Player) sender).teleport(entry.getValue().first);
-            }
+            if (sender instanceof Player) ((Player) sender).teleport(entry.getValue().first);
+        } catch (NumberFormatException ex) {
+            sender.sendMessage(ChatColor.RED + args[0] + " is not an integer.");
         } catch (Exception ex) {
             sender.sendMessage("Error occured: " + ex.toString());
         }

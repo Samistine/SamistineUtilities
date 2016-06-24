@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Samuel Seidel.
+ * Copyright 2016 Samuel.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,62 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.samistine.samistineutilities.api;
+package com.samistine.samistineutilities.utils;
 
 import com.samistine.samistineutilities.SamistineUtilities;
-import java.util.logging.Logger;
-import org.bukkit.Server;
-import org.bukkit.configuration.file.FileConfiguration;
+import com.samistine.samistineutilities.api.SFeature;
 
 /**
+ * Placeholder for features that have been purposely disabled.
  *
- * @author Samuel Seidel
+ * @author Samuel
  */
-public interface Feature {
+public class SFeatureDisabled extends SFeature {
 
-    /**
-     * The name of this feature
-     *
-     * @return name
-     */
-    public String getName();
+    public SFeatureDisabled(SamistineUtilities plugin) {
+        super(plugin, "DISABLED", "DISABLED");
+    }
 
-    /**
-     * A short one-to-two liner description about this feature
-     *
-     * @return description
-     */
-    public String getDesc();
+    @Override
+    public boolean isRunning() {
+        return false;
+    }
 
-    /**
-     * Gets the logger for the feature.
-     * <p>
-     * This logger contains the features {@link #getName() name} to assist in
-     * debugging.
-     *
-     * @return logger
-     */
-    public Logger getLogger();
+    @Override
+    protected void onEnable() {
+    }
 
-    /**
-     * Gets the running minecraft(bukkit) server.
-     *
-     * @return server
-     */
-    public Server getServer();
-
-    /**
-     * Get the plugin that this feature is running under
-     *
-     * @return plugin
-     */
-    public SamistineUtilities getRootPlugin();
-
-    /**
-     * Gets the {@link SamistineUtilities plugin}'s root/main config.
-     *
-     * @return config
-     */
-    public FileConfiguration getRootConfig();
+    @Override
+    protected void onDisable() {
+    }
 
 }

@@ -23,10 +23,10 @@
  */
 package com.samistine.samistineutilities.features;
 
-import com.samistine.samistineutilities.api.objects.FeatureInfo;
+import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.api.SFeature;
-import com.samistine.samistineutilities.api.SListener;
 
+import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.weather.WeatherChangeEvent;
@@ -34,6 +34,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import java.util.logging.Level;
 import java.util.Arrays;
 import java.util.HashSet;
+import org.bukkit.event.HandlerList;
 
 /**
  * <h1>NoRainFall</h1>
@@ -59,13 +60,21 @@ import java.util.HashSet;
  * @author Samuel Seidel
  * @version 1.0
  */
-@FeatureInfo(name = "NoRainFall", desc = "Stops rain in specified worlds")
-public final class NoRainFall extends SFeature implements SListener {
+//@FeatureInfo(name = "NoRainFall", desc = "Stops rain in specified worlds")
+public final class NoRainFall extends SFeature implements Listener {
 
-    private final boolean conf_all_worlds;
-    private final HashSet<String> conf_worlds;
+    public NoRainFall(SamistineUtilities main) {
+        super(main,
+                "NoRainFall",
+                "Stops rain in specified worlds"
+        );
+    }
 
-    public NoRainFall() {
+    private boolean conf_all_worlds;
+    private HashSet<String> conf_worlds;
+
+    @Override
+    protected void onEnable() {
         conf_all_worlds = this.getConfig().getBoolean("all_worlds", false);
         conf_worlds = new HashSet<>(this.getConfig().getStringList("worlds"));
 
@@ -75,11 +84,17 @@ public final class NoRainFall extends SFeature implements SListener {
                     .forEach(world -> getLogger().log(Level.WARNING, "The world {0} was not found.", world));
         }
 
+        getServer().getPluginManager().registerEvents(this, featurePlugin);
         getLogger().log(Level.INFO, "Weather is disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onRainStart(WeatherChangeEvent event) {
+    @Override
+    protected void onDisable() {
+        HandlerList.unregisterAll(this);
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    protected void onRainStart(WeatherChangeEvent event) {
         if (event.toWeatherState()
                 && (conf_all_worlds || conf_worlds.contains(event.getWorld().getName()))) {
             event.setCancelled(true);
