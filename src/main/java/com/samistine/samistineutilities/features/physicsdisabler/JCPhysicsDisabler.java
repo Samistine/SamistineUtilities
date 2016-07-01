@@ -106,7 +106,7 @@ public final class JCPhysicsDisabler extends SFeature {
      * <li>2 - Block physics updates in registered regions</li>
      * </ul>
      *
-     * @param i
+     * @param i mode to set
      */
     public void setMode(int i) {
         HandlerList.unregisterAll(listenerSimple);

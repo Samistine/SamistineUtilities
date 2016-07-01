@@ -27,7 +27,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  *
- * @author xCopyright & Samistine
+ * @author xCopyright and Samistine
  */
 @FeatureInfo(name = "AntiPortalTrap", desc = "Prevents players from being portal trapped")
 public final class AntiPortalTrap extends SFeature implements Listener {
