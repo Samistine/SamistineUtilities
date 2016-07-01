@@ -36,7 +36,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * @author Samuel Seidel
  */
-public final class SamistineUtilities extends JavaPlugin {
+public class SamistineUtilities extends JavaPlugin {
 
     Map<Features, SFeature> m;
 

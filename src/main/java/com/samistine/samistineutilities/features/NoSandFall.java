@@ -24,6 +24,7 @@
 package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.SamistineUtilities;
+import com.samistine.samistineutilities.api.FeatureInfo;
 import com.samistine.samistineutilities.api.SFeature;
 
 import org.bukkit.event.Listener;
@@ -66,14 +67,11 @@ import org.bukkit.event.HandlerList;
  * @author Samuel Seidel
  * @version 1.0
  */
-//@FeatureInfo(name = "NoSandFall", desc = "Stops falling blocks in specified worlds")
+@FeatureInfo(name = "NoSandFall", desc = "Stops falling blocks in specified worlds")
 public final class NoSandFall extends SFeature implements Listener {
 
     public NoSandFall(SamistineUtilities main) {
-        super(main,
-                "NoSandFall",
-                "Stops falling blocks in specified worlds"
-        );
+        super(main);
     }
 
     private boolean conf_all_worlds;

@@ -25,6 +25,7 @@ package com.samistine.samistineutilities.features;
 
 import com.dictiography.collections.IndexedTreeMap;
 import com.samistine.samistineutilities.SamistineUtilities;
+import com.samistine.samistineutilities.api.FeatureInfo;
 import com.samistine.samistineutilities.api.SFeature;
 import com.samistine.samistineutilities.utils.Pair;
 import com.samistine.samistineutilities.utils.TimeUtils;
@@ -48,14 +49,11 @@ import org.bukkit.event.Listener;
  *
  * @author Samuel Seidel
  */
-//@FeatureInfo(name = "FindTiles", desc = "Find laggy chunks", commands = "/findtiles")
+@FeatureInfo(name = "FindTiles", desc = "Find laggy chunks", commands = "/findtiles")
 public final class FindTiles extends SFeature implements Listener {
 
     public FindTiles(SamistineUtilities main) {
-        super(main,
-                "FindTiles",
-                "Find laggy chunks"
-        );
+        super(main);
     }
 
     private IndexedTreeMap<Long, Pair<Location, Integer>> locs;
@@ -83,7 +81,7 @@ public final class FindTiles extends SFeature implements Listener {
             getServer().broadcast(MessageFormat.format("{0} Tile Entities detected at x:{1} z:{2}", tileEntities, e.getChunk().getX(), e.getChunk().getZ()),
                     "SamistineUtilities.findtiles");
             Location loc = e.getChunk().getBlock(7, 100, 7).getLocation();
-            if (!locs.values().stream().anyMatch(pair -> pair.first.equals(loc))) {
+            if (locs.values().stream().noneMatch(pair -> pair.first.equals(loc))) {
                 locs.put(System.currentTimeMillis(), new Pair<>(loc, tileEntities));
             }
         }

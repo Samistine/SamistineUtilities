@@ -28,6 +28,7 @@ import com.samistine.samistineutilities.utils.annotations.command.backend.Comman
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.Validate;
 
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
@@ -47,12 +48,47 @@ public abstract class SFeature {
     protected final String featureDesc;
     protected final Logger featureLogger;
 
-    public SFeature(SamistineUtilities plugin, String name, String description) {
+    /**
+     * Convenience constructor when specifying the feature's name and
+     * description within a {@link FeatureInfo} annotation
+     *
+     * @param plugin the Spigot plugin to run this feature
+     */
+    protected SFeature(SamistineUtilities plugin) {
+        FeatureInfo info = getClass().getAnnotation(FeatureInfo.class);
+        Validate.notNull(info, "Feature must contain FeatureInfo anotation when using the convenience constuctor");
+        this.featurePlugin = plugin;
+        this.featureServer = plugin.getServer();
+        this.featureName = info.name();
+        this.featureDesc = info.desc();
+        this.featureLogger = new FeatureLogger(this);
+        validateConstruction();
+    }
+
+    /**
+     *
+     * @param plugin the Spigot plugin to run this feature
+     * @param name the name of this feature
+     * @param description a description about this feature
+     */
+    protected SFeature(SamistineUtilities plugin, String name, String description) {
         this.featurePlugin = plugin;
         this.featureServer = plugin.getServer();
         this.featureName = name;
         this.featureDesc = description;
         this.featureLogger = new FeatureLogger(this);
+        validateConstruction();
+    }
+
+    /**
+     * Validate everything is setup properly, (no null fields).
+     */
+    private void validateConstruction() {
+        Validate.notNull(featurePlugin, "Plugin cannot be null");
+        Validate.notNull(featureServer, "Server cannot be null");
+        Validate.notNull(featureName, "Name cannot be null");
+        Validate.notNull(featureDesc, "Description cannot be null");
+        Validate.notNull(featureLogger, "Logger cannot be null");
     }
 
     private boolean running;

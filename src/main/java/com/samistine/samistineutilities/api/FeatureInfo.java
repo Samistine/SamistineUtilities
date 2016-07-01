@@ -29,6 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Used to add information to a Utility's main class. This allows for getting
+ * the Utility's name and description without instantiating the class
  *
  * @author Samuel Seidel
  */

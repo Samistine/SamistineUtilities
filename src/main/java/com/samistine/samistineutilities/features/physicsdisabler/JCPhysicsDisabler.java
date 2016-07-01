@@ -24,6 +24,7 @@
 package com.samistine.samistineutilities.features.physicsdisabler;
 
 import com.samistine.samistineutilities.SamistineUtilities;
+import com.samistine.samistineutilities.api.FeatureInfo;
 import com.samistine.samistineutilities.api.SFeature;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
@@ -74,7 +75,7 @@ import org.bukkit.plugin.PluginManager;
  * @author Jasper Nalbach
  * @version 1.2
  */
-//@FeatureInfo(name = "PhysicsDisabler", desc = "Block title entities from ticking in specific/all places", commands = "/disablephysics")
+@FeatureInfo(name = "PhysicsDisabler", desc = "Block title entities from ticking in specific/all places", commands = "/disablephysics")
 public final class JCPhysicsDisabler extends SFeature {
 
     private final JCPDCommandExecutor command = new JCPDCommandExecutor(this);
@@ -82,10 +83,7 @@ public final class JCPhysicsDisabler extends SFeature {
     private final JCPDListenerRegions listenerRegions = new JCPDListenerRegions();
 
     public JCPhysicsDisabler(SamistineUtilities main) {
-        super(main,
-                "PhysicsDisabler",
-                "Block title entities from ticking in specific/all places"
-        );
+        super(main);
     }
 
     @Override
