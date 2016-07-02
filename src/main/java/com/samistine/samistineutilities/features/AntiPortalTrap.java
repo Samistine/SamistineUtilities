@@ -8,10 +8,12 @@ import com.samistine.samistineutilities.api.FeatureInfo;
 import com.samistine.samistineutilities.api.SFeature;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,8 +36,8 @@ public final class AntiPortalTrap extends SFeature implements Listener {
 
     Map<Player, XZLocation> portalloc = new HashMap<>();
 
-    HashSet<Integer> allowedBottomBlocks;
-    HashSet<Integer> allowedTopperBlocks;
+    Set<Integer> allowedBottomBlocks;
+    Set<Integer> allowedTopperBlocks;
 
     public AntiPortalTrap(SamistineUtilities main) {
         super(main);
@@ -44,8 +46,8 @@ public final class AntiPortalTrap extends SFeature implements Listener {
     @Override
     protected void onEnable() {
         getServer().getPluginManager().registerEvents(this, featurePlugin);
-        this.allowedBottomBlocks = new HashSet<>(getConfig().getIntegerList("Allowed Blocks.Bottom"));
-        this.allowedTopperBlocks = new HashSet<>(getConfig().getIntegerList("Allowed Blocks.Top"));
+        this.allowedBottomBlocks = Collections.unmodifiableSet(new HashSet<>(getConfig().getIntegerList("Allowed Blocks.Bottom")));
+        this.allowedTopperBlocks = Collections.unmodifiableSet(new HashSet<>(getConfig().getIntegerList("Allowed Blocks.Top")));
     }
 
     @Override
@@ -53,12 +55,12 @@ public final class AntiPortalTrap extends SFeature implements Listener {
         HandlerList.unregisterAll(this);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     protected void onPortalEvent(PlayerPortalEvent event) {
         getServer().getScheduler().scheduleSyncDelayedTask(featurePlugin, new TrapCheck(event.getPlayer()), 1L);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     protected void onPlayerMoveEvent(PlayerMoveEvent event) {
         Material material = event.getPlayer().getLocation().getBlock().getType();
         if (material == Material.PORTAL || material == Material.ENDER_PORTAL) {

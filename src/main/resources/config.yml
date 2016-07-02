@@ -16,6 +16,12 @@
 PhysicsDisabler: {}
 FindTiles: {}
 
+#Autorespawn player x ticks after death screen via "player.spigot().respawn();"
+AutoRespawn: {
+    #Delay, in ticks, before respawning player.
+    delay: 10 #Long
+}
+
 NoSandFall: {
     all_worlds: true,
     worlds: [
