@@ -25,6 +25,7 @@ package com.samistine.samistineutilities;
 
 import com.samistine.samistineutilities.api.SFeature;
 import com.samistine.samistineutilities.features.AntiPortalTrap;
+import com.samistine.samistineutilities.features.AutoRespawn;
 import com.samistine.samistineutilities.features.ChatUtils;
 import com.samistine.samistineutilities.features.FindTiles;
 import com.samistine.samistineutilities.features.NoRainFall;
@@ -42,7 +43,8 @@ public enum Features {
     FindTiles("FindTiles", FindTiles.class),
     PhysicsDisabler("PhysicsDisabler", JCPhysicsDisabler.class),
     ChatUtils("ChatUtils", ChatUtils.class),
-    AntiPortalTrap("AntiPortalTrap", AntiPortalTrap.class)/*PermissionUtils("PermissionUtils", PermissionUtils.class)*/;
+    AntiPortalTrap("AntiPortalTrap", AntiPortalTrap.class),
+    AutoRespawn("AutoRespawn", AutoRespawn.class)/*PermissionUtils("PermissionUtils", PermissionUtils.class)*/;
 
     private final String name;
     private final Class<? extends SFeature> clazz;
