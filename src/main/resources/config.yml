@@ -155,3 +155,25 @@ AntiPortalTrap: {
         ]
     }
  }
+
+#Add custom effects and sounds to a players death
+DeathEffects: {
+    #Create a non-harming explosion when and where a player dies
+    explosion: true,
+    
+    #Play effects, multiple if desired. Valid Enums: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html
+    effects: [
+        ENDER_SIGNAL,
+        FLAME
+    ],
+
+    #Play sounds, multiple if desired. Valid Enums: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+    sounds: [
+        #Sound sound, float volume, float pitch
+        {
+            sound: GHAST_SCREAM2,
+            volume: 1.0,
+            pitch: 1.0
+        }
+    ]
+}
