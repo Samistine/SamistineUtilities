@@ -23,20 +23,20 @@
  */
 package com.samistine.samistineutilities;
 
-import com.samistine.samistineutilities.FeatureHelper;
-import com.samistine.samistineutilities.SamistineUtilities;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 
 /**
  *
  * @author Samuel Seidel
  */
-public final class FeatureManagerHelper {
+final class Utils {
 
-    public static SFeature init(SamistineUtilities main, FeatureHelper feature) {
+    static SFeature init(SamistineUtilities main, FeatureHelper feature) {
         Logger logger = SamistineUtilities.getInstance().getLogger();
         try {
             logger.log(Level.INFO, "Initializing {0}", feature.getName());
@@ -50,7 +50,7 @@ public final class FeatureManagerHelper {
         }
     }
 
-    public static boolean enable(SFeature feature) {
+    static boolean enable(SFeature feature) {
         Logger logger = SamistineUtilities.getInstance().getLogger();
         if (feature == null) {
             throw new NullPointerException("Feature can not be null");
@@ -64,7 +64,7 @@ public final class FeatureManagerHelper {
         }
     }
 
-    public static boolean disable(SFeature feature) {
+    static boolean disable(SFeature feature) {
         Logger logger = SamistineUtilities.getInstance().getLogger();
         if (feature == null) {
             throw new NullPointerException("Feature can not be null");
@@ -77,5 +77,20 @@ public final class FeatureManagerHelper {
                 return false;
             }
         }
+    }
+
+    public static String[] getModuleStatus() {
+        return SamistineUtilities.getInstance().features.keySet().stream().map((plugin) -> {
+            return ChatColor.GOLD + "[" + plugin.getName() + "]" + ChatColor.GRAY + " Status: " + getModuleStatus(plugin);
+        }).toArray(String[]::new);
+    }
+
+    public static String getModuleStatus(Plugin plugin) {
+        StringBuilder sb = new StringBuilder(300);
+        for (FeatureHelper feature : SamistineUtilities.getInstance().features.get(plugin)) {
+            sb.append(feature.getStatus().getStatusColor()).append(feature.getName()).append(", ");
+        }
+        String status = sb.toString();
+        return status.substring(0, status.lastIndexOf(", "));
     }
 }

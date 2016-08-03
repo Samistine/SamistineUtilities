@@ -23,7 +23,6 @@
  */
 package com.samistine.samistineutilities;
 
-import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.utils.annotations.command.backend.CommandManager;
 
 import java.util.logging.Level;

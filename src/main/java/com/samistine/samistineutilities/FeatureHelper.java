@@ -108,7 +108,7 @@ public final class FeatureHelper {
                 throw new IllegalStateException("Can not initialize an already initialized/inititializing feature, State was:" + status.name());
             default: {
                 status = Status.INITIALIZING;
-                instance = FeatureManagerHelper.init(main, this);
+                instance = Utils.init(main, this);
                 if (instance != null) {
                     status = Status.INITIALIZED;
                 } else {
@@ -120,7 +120,7 @@ public final class FeatureHelper {
 
     synchronized void enable() {
         if (status == Status.INITIALIZED) {
-            status = FeatureManagerHelper.enable(instance) ? Status.ENABLED : Status.ERROR_INITIALIZATION2;
+            status = Utils.enable(instance) ? Status.ENABLED : Status.ERROR_INITIALIZATION2;
         } else {
             throw new IllegalStateException("Can not enable a non initialized feature, State was:" + status.name());
         }
@@ -128,7 +128,7 @@ public final class FeatureHelper {
 
     synchronized void disable() {
         if (status == Status.ENABLED) {
-            status = FeatureManagerHelper.disable(instance) ? Status.INITIALIZED : Status.ERROR_DISABLING;
+            status = Utils.disable(instance) ? Status.INITIALIZED : Status.ERROR_DISABLING;
         } else {
             throw new IllegalStateException("Can not disable a non enabled feature, State was:" + status.name());
         }

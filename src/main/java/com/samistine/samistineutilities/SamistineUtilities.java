@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -63,21 +62,6 @@ public class SamistineUtilities extends JavaPlugin {
 
     public static SamistineUtilities getInstance() {
         return getPlugin(SamistineUtilities.class);
-    }
-
-    public String[] getModuleStatus() {
-        return features.keySet().stream().map((plugin) -> {
-            return ChatColor.GOLD + "[" + plugin.getName() + "]" + ChatColor.GRAY + " Status: " + getModuleStatus(plugin);
-        }).toArray(String[]::new);
-    }
-
-    public String getModuleStatus(Plugin plugin) {
-        StringBuilder sb = new StringBuilder(300);
-        for (FeatureHelper feature : features.get(plugin)) {
-            sb.append(feature.getStatus().getStatusColor()).append(feature.getName()).append(", ");
-        }
-        String status = sb.toString();
-        return status.substring(0, status.lastIndexOf(", "));
     }
 
     public Collection<FeatureHelper> loadFeatures(Plugin plugin, String classPath, Predicate<FeatureHelper> shouldEnable) {
@@ -116,7 +100,7 @@ public class SamistineUtilities extends JavaPlugin {
                 .filter(FeatureHelper::stateIsInitialized)
                 .forEach(featureHelper -> featureHelper.enable());
 
-        getServer().getConsoleSender().sendMessage(getModuleStatus());
+        getServer().getConsoleSender().sendMessage(Utils.getModuleStatus());
 
         return featureHelpers;
     }
