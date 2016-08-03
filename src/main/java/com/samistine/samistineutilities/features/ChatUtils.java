@@ -24,7 +24,7 @@
 package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.api.SFeature;
+import com.samistine.samistineutilities.SFeature;
 import com.samistine.samistineutilities.utils.BukkitUtils;
 import java.util.ArrayList;
 import java.util.List;

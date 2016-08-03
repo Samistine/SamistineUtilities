@@ -24,8 +24,8 @@
 package com.samistine.samistineutilities.features.deatheffects;
 
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.api.FeatureInfo;
-import com.samistine.samistineutilities.api.SFeature;
+import com.samistine.samistineutilities.FeatureInfo;
+import com.samistine.samistineutilities.SFeature;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

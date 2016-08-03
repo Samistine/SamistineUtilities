@@ -25,8 +25,8 @@ package com.samistine.samistineutilities.features;
 
 import com.dictiography.collections.IndexedTreeMap;
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.api.FeatureInfo;
-import com.samistine.samistineutilities.api.SFeature;
+import com.samistine.samistineutilities.FeatureInfo;
+import com.samistine.samistineutilities.SFeature;
 import com.samistine.samistineutilities.utils.Pair;
 import com.samistine.samistineutilities.utils.TimeUtils;
 import java.text.MessageFormat;

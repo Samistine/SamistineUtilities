@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Samuel.
+ * Copyright 2016 Samuel Seidel.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.samistine.samistineutilities.utils;
+package com.samistine.samistineutilities;
 
-import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.api.SFeature;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Placeholder for features that have been purposely disabled.
+ * Used to add information to a Utility's main class. This allows for getting
+ * the Utility's name and description without instantiating the class
  *
- * @author Samuel
+ * @author Samuel Seidel
  */
-public class SFeatureDisabled extends SFeature {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface FeatureInfo {
 
-    public SFeatureDisabled(SamistineUtilities plugin) {
-        super(plugin, "DISABLED", "DISABLED");
-    }
+    /**
+     * The name of this utility
+     *
+     * @return name
+     */
+    public String name();
 
-    @Override
-    public boolean isRunning() {
-        return false;
-    }
+    /**
+     * A short one-to-two liner description about this utility
+     *
+     * @return description
+     */
+    public String desc();
 
-    @Override
-    protected void onEnable() {
-    }
-
-    @Override
-    protected void onDisable() {
-    }
-
+    /**
+     * Gets the commands this method can handle
+     * <p>
+     * Please specify commands here in your implementation.
+     * </p>
+     *
+     * @return commands used by this utility
+     */
+    public String[] commands() default {};
 }

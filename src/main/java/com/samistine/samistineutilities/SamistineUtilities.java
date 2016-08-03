@@ -23,8 +23,6 @@
  */
 package com.samistine.samistineutilities;
 
-import com.samistine.samistineutilities.api.FeatureInfo;
-import com.samistine.samistineutilities.api.SFeature;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

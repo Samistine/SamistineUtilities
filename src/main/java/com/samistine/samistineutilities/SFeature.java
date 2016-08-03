@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.samistine.samistineutilities.api;
+package com.samistine.samistineutilities;
 
 import com.samistine.samistineutilities.SamistineUtilities;
 import com.samistine.samistineutilities.utils.annotations.command.backend.CommandManager;

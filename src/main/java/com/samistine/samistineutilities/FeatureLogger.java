@@ -1,4 +1,4 @@
-package com.samistine.samistineutilities.api;
+package com.samistine.samistineutilities;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;

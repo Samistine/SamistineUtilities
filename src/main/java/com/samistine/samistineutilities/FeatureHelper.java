@@ -23,8 +23,6 @@
  */
 package com.samistine.samistineutilities;
 
-import com.samistine.samistineutilities.api.FeatureManagerHelper;
-import com.samistine.samistineutilities.api.SFeature;
 import org.bukkit.ChatColor;
 
 /**

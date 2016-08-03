@@ -24,8 +24,8 @@
 package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.api.FeatureInfo;
-import com.samistine.samistineutilities.api.SFeature;
+import com.samistine.samistineutilities.FeatureInfo;
+import com.samistine.samistineutilities.SFeature;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
