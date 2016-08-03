@@ -23,14 +23,19 @@
  */
 package com.samistine.samistineutilities;
 
-import com.samistine.samistineutilities.api.FeatureManagerHelper;
+import com.samistine.samistineutilities.api.FeatureInfo;
 import com.samistine.samistineutilities.api.SFeature;
-import com.samistine.samistineutilities.utils.SFeatureDisabled;
-import java.util.EnumMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.reflections.Reflections;
 
 /**
  *
@@ -38,50 +43,84 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SamistineUtilities extends JavaPlugin {
 
-    Map<Features, SFeature> m;
+    Map<Plugin, List<FeatureHelper>> features = new HashMap<>();
+    Collection<FeatureHelper> utilities;
 
     @Override
     public void onEnable() {
-        m = new EnumMap<>(Features.class);
         saveDefaultConfig();
-
-        for (Features feature : Features.values()) {
-            SFeature sFeature;
-            if (getConfig().get(feature.getName(), null) == null) {
-                sFeature = new SFeatureDisabled(this);
-            } else {
-                sFeature = FeatureManagerHelper.init(this, feature);
-            }
-            m.put(feature, sFeature);
-        }
-
-        m.values().stream().filter(Objects::nonNull).forEach(FeatureManagerHelper::enable);
-
-        getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[SamistineUtilities]" + ChatColor.GRAY + " Status: " + getModuleStatus());
+        utilities = loadFeatures(
+                this,
+                "com.samistine.samistineutilities.features",
+                feature -> getConfig().get(feature.getName(), null) != null
+        );
     }
 
     @Override
     public void onDisable() {
-        m.values().stream().filter(Objects::nonNull).forEach(FeatureManagerHelper::disable);
+        utilities.stream()
+                .filter(FeatureHelper::stateIsEnabled)
+                .forEach(FeatureHelper::disable);
     }
 
     public static SamistineUtilities getInstance() {
         return getPlugin(SamistineUtilities.class);
     }
 
-    public String getModuleStatus() {
-        StringBuilder sb = new StringBuilder();
-        for (Features feature : Features.values()) {
-            SFeature featureInstance = m.get(feature);
-            if (featureInstance == null) {
-                sb.append(ChatColor.RED);
-            } else {
-                sb.append((featureInstance.isRunning() ? ChatColor.GREEN : ChatColor.DARK_GRAY));
-            }
-            sb.append(feature.getName()).append(", ");
+    public String[] getModuleStatus() {
+        return features.keySet().stream().map((plugin) -> {
+            return ChatColor.GOLD + "[" + plugin.getName() + "]" + ChatColor.GRAY + " Status: " + getModuleStatus(plugin);
+        }).toArray(String[]::new);
+    }
+
+    public String getModuleStatus(Plugin plugin) {
+        StringBuilder sb = new StringBuilder(300);
+        for (FeatureHelper feature : features.get(plugin)) {
+            sb.append(feature.getStatus().getStatusColor()).append(feature.getName()).append(", ");
         }
         String status = sb.toString();
         return status.substring(0, status.lastIndexOf(", "));
+    }
+
+    public Collection<FeatureHelper> loadFeatures(Plugin plugin, String classPath, Predicate<FeatureHelper> shouldEnable) {
+        Reflections reflections = new Reflections(classPath);
+        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(FeatureInfo.class);
+
+        Collection<Class<SFeature>> featureClasses = new ArrayList<>();
+        for (Class<?> clazz : annotated) {
+            try {
+                featureClasses.add(
+                        (Class<SFeature>) clazz
+                );
+            } catch (ClassCastException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        List<FeatureHelper> featureHelpers = new ArrayList<>();
+        for (Class<SFeature> clazz : featureClasses) {
+            FeatureInfo info = clazz.getAnnotation(FeatureInfo.class);
+            FeatureHelper featureHelper = new FeatureHelper(info.name(), clazz);
+            featureHelpers.add(featureHelper);
+        }
+
+        features.putIfAbsent(plugin, new ArrayList<>());
+
+        List<FeatureHelper> list = features.get(plugin);
+
+        list.addAll(featureHelpers);
+
+        featureHelpers.stream()
+                .filter(shouldEnable)
+                .forEach(featureHelper -> featureHelper.init(this));
+
+        featureHelpers.stream()
+                .filter(FeatureHelper::stateIsInitialized)
+                .forEach(featureHelper -> featureHelper.enable());
+
+        getServer().getConsoleSender().sendMessage(getModuleStatus());
+
+        return featureHelpers;
     }
 
 }

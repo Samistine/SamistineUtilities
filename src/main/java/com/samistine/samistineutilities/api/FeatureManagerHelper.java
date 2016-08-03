@@ -23,7 +23,7 @@
  */
 package com.samistine.samistineutilities.api;
 
-import com.samistine.samistineutilities.Features;
+import com.samistine.samistineutilities.FeatureHelper;
 import com.samistine.samistineutilities.SamistineUtilities;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  */
 public final class FeatureManagerHelper {
 
-    public static SFeature init(SamistineUtilities main, Features feature) {
+    public static SFeature init(SamistineUtilities main, FeatureHelper feature) {
         Logger logger = SamistineUtilities.getInstance().getLogger();
         try {
             logger.log(Level.INFO, "Initializing {0}", feature.getName());
@@ -56,8 +56,7 @@ public final class FeatureManagerHelper {
             throw new NullPointerException("Feature can not be null");
         } else {
             try {
-                feature.start();
-                return true;
+                return feature.start();
             } catch (Exception ex) {
                 logger.log(Level.SEVERE, "Could not start " + feature.getName(), ex);
                 return false;

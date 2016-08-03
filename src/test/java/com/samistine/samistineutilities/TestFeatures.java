@@ -26,9 +26,11 @@ package com.samistine.samistineutilities;
 import com.samistine.samistineutilities.api.FeatureInfo;
 import com.samistine.samistineutilities.api.SFeature;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.bukkit.plugin.Plugin;
 import org.junit.Test;
@@ -37,6 +39,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.reflections.Reflections;
 
 /**
  *
@@ -48,8 +51,21 @@ public class TestFeatures {
     @Parameters
     public static Collection<Class<? extends SFeature>> featureClassesToTest() {
         System.out.print("Gathering features");
-        List<Class<? extends SFeature>> features = Arrays.stream(Features.values()).map(Features::getClazz).collect(Collectors.toList());
-        System.out.println(": " + Arrays.toString(Features.values()));
+
+        Reflections reflections = new Reflections("com.samistine");
+        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(FeatureInfo.class);
+
+        Collection<Class<? extends SFeature>> features = new ArrayList<>();
+        for (Class<?> clazz : annotated) {
+            try {
+                features.add(
+                        (Class<SFeature>) clazz
+                );
+            } catch (ClassCastException ex) {
+                ex.printStackTrace();
+            }
+        }
+
         return features;
     }
 

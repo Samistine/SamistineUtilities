@@ -93,7 +93,7 @@ public abstract class SFeature {
 
     private boolean running;
 
-    void start() {
+    boolean start() {
         if (isRunning()) {
             throw new AlreadyStartedException(featureName + " is already running.");
         } else if (shouldEnable()) {
@@ -102,6 +102,7 @@ public abstract class SFeature {
             featureLogger.log(Level.INFO, "Enabled");
             running = true;
         }
+        return running;
     }
 
     void stop() {
