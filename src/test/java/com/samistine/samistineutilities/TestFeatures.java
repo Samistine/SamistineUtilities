@@ -81,15 +81,16 @@ public class TestFeatures {
      */
     @Test
     public void testConstructor() {
+        System.out.println("Testing " + feature);
         Constructor<?>[] constructors = feature.getDeclaredConstructors();
 
         assertTrue("Feature should have a single constructor", constructors.length == 1);
 
         Constructor<?> constructor = constructors[0];
 
-        assertArrayEquals("Feature should take an instance of SamistineUtilities.class as its only parameter", constructor.getParameterTypes(), new Object[]{SamistineUtilities.class});
+        //System.out.println(Arrays.toString(constructors));
+        assertArrayEquals("Feature (" + feature.getName() + ") should take an instance of SamistineUtilities.class as its only parameter", constructor.getParameterTypes(), new Object[]{SamistineUtilities.class});
 
-        System.out.println(Arrays.toString(constructors));
         assertTrue("Features does not have a ", true);
         assertEquals(true, true);
     }

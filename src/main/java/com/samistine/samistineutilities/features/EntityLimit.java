@@ -2,13 +2,13 @@ package com.samistine.samistineutilities.features;
 
 import com.samistine.mcplugins.api.FeatureInfo;
 import com.samistine.mcplugins.api.SFeatureListener;
+import com.samistine.samistineutilities.SamistineUtilities;
 import org.bukkit.Chunk;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 @FeatureInfo(
         name = "EntityLimit",
@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 )
 public final class EntityLimit extends SFeatureListener {
 
-    public EntityLimit(JavaPlugin plugin) {
+    public EntityLimit(SamistineUtilities plugin) {
         super(plugin);
     }
 
