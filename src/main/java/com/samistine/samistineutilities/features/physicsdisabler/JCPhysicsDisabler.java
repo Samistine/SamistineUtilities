@@ -24,8 +24,8 @@
 package com.samistine.samistineutilities.features.physicsdisabler;
 
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.FeatureInfo;
-import com.samistine.samistineutilities.SFeature;
+import com.samistine.mcplugins.api.FeatureInfo;
+import com.samistine.mcplugins.api.SFeature;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 

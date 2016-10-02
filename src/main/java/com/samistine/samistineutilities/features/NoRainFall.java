@@ -24,8 +24,9 @@
 package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.FeatureInfo;
-import com.samistine.samistineutilities.SFeature;
+import com.samistine.mcplugins.api.FeatureInfo;
+import com.samistine.mcplugins.api.SFeature;
+import com.samistine.mcplugins.api.SFeatureListener;
 
 import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
@@ -62,7 +63,7 @@ import org.bukkit.event.HandlerList;
  * @version 1.0
  */
 @FeatureInfo(name = "NoRainFall", desc = "Stops rain in specified worlds")
-public final class NoRainFall extends SFeature implements Listener {
+public final class NoRainFall extends SFeatureListener {
 
     public NoRainFall(SamistineUtilities main) {
         super(main);
@@ -82,13 +83,9 @@ public final class NoRainFall extends SFeature implements Listener {
                     .forEach(world -> getLogger().log(Level.WARNING, "The world {0} was not found.", world));
         }
 
-        getServer().getPluginManager().registerEvents(this, featurePlugin);
         getLogger().log(Level.INFO, "Weather is disabled in {0}", (conf_all_worlds ? "all worlds." : ":" + Arrays.toString(conf_worlds.toArray())));
-    }
 
-    @Override
-    protected void onDisable() {
-        HandlerList.unregisterAll(this);
+        super.onEnable();
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

@@ -23,24 +23,16 @@
  */
 package com.samistine.samistineutilities;
 
-import java.util.ArrayList;
+import com.samistine.mcplugins.api.FeatureHelper;
+import com.samistine.mcplugins.api.SamistineAPI;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.reflections.Reflections;
 
 /**
  *
  * @author Samuel Seidel
  */
-public class SamistineUtilities extends JavaPlugin {
+public final class SamistineUtilities extends SamistineAPI {
 
-    Map<Plugin, List<FeatureHelper>> features = new HashMap<>();
     Collection<FeatureHelper> utilities;
 
     @Override
@@ -57,52 +49,7 @@ public class SamistineUtilities extends JavaPlugin {
     public void onDisable() {
         utilities.stream()
                 .filter(FeatureHelper::stateIsEnabled)
-                .forEach(FeatureHelper::disable);
-    }
-
-    public static SamistineUtilities getInstance() {
-        return getPlugin(SamistineUtilities.class);
-    }
-
-    public Collection<FeatureHelper> loadFeatures(Plugin plugin, String classPath, Predicate<FeatureHelper> shouldEnable) {
-        Reflections reflections = new Reflections(classPath);
-        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(FeatureInfo.class);
-
-        Collection<Class<SFeature>> featureClasses = new ArrayList<>();
-        for (Class<?> clazz : annotated) {
-            try {
-                featureClasses.add(
-                        (Class<SFeature>) clazz
-                );
-            } catch (ClassCastException ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        List<FeatureHelper> featureHelpers = new ArrayList<>();
-        for (Class<SFeature> clazz : featureClasses) {
-            FeatureInfo info = clazz.getAnnotation(FeatureInfo.class);
-            FeatureHelper featureHelper = new FeatureHelper(info.name(), clazz);
-            featureHelpers.add(featureHelper);
-        }
-
-        features.putIfAbsent(plugin, new ArrayList<>());
-
-        List<FeatureHelper> list = features.get(plugin);
-
-        list.addAll(featureHelpers);
-
-        featureHelpers.stream()
-                .filter(shouldEnable)
-                .forEach(featureHelper -> featureHelper.init(this));
-
-        featureHelpers.stream()
-                .filter(FeatureHelper::stateIsInitialized)
-                .forEach(featureHelper -> featureHelper.enable());
-
-        getServer().getConsoleSender().sendMessage(Utils.getModuleStatus());
-
-        return featureHelpers;
+                .forEach(this::unloadFeature);
     }
 
 }

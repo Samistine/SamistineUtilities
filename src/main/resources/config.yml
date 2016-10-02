@@ -56,6 +56,32 @@ ChatUtils: {
 
 }
 
+ChatLimiter: {
+#Utility to help reduce spam
+#Assigning the permission, samistine.chatlimiter.ignore, will allow a player to bypass these limits
+    
+    #Minimum players needed online for anthing below to take affect.
+    min_players: 8,
+
+    #Delay players have to wait between messages/commands
+    delay: 2,
+    
+    #Prevent the player from sending duplicate messages.
+    block_dupe_messages: true,
+    
+    #Prevent the player from sending duplicate commands.
+    block_dupe_commands: false,
+    
+    #Require the player to move before they're allowed to speak or issue commands (This'll break MineChat)
+    block_until_moved: false,
+    
+    message: '&4You must wait {0} seconds between messages! ({1} remaining)',
+    message_move_chat: '&4You must move before chatting!',
+    message_move_comm: '&4You must move before sending commands!',
+    message_dupl_chat: '&4Can not send duplicate messages!',
+    message_dupl_comm: '&4Can not send duplicate commands!'
+}
+
 PermissionUtils: {
 
     PermissionsOverride: {
@@ -176,4 +202,10 @@ DeathEffects: {
             pitch: 1.0
         }
     ]
+}
+
+
+EntityLimit: {
+    #If the entities in a single chunk exceed this, the chunk will be regenerated
+    max_entities: 2000
 }

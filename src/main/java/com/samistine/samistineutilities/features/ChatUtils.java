@@ -23,10 +23,11 @@
  */
 package com.samistine.samistineutilities.features;
 
+import com.samistine.mcplugins.api.FeatureInfo;
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.SFeature;
-import com.samistine.samistineutilities.utils.BukkitUtils;
-import java.util.ArrayList;
+import com.samistine.mcplugins.api.SFeature;
+import com.samistine.mcplugins.api.utils.BukkitUtils;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -44,17 +45,14 @@ import org.bukkit.plugin.PluginManager;
  *
  * @author Samuel Seidel
  */
-//@FeatureInfo(name = "ChatUtils", desc = "Various chat things")
+@FeatureInfo(name = "ChatUtils", desc = "Various chat things")
 public final class ChatUtils extends SFeature {
 
     public ChatUtils(SamistineUtilities main) {
-        super(main,
-                "ChatUtils",
-                "Various chat things"
-        );
+        super(main);
     }
 
-    private final List<Listener> registeredListeners = new ArrayList<>(1);
+    private final List<Listener> registeredListeners = new LinkedList<>();
 
     @Override
     protected void onEnable() {

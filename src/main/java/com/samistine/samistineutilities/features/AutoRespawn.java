@@ -24,14 +24,11 @@
 package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.FeatureInfo;
-import com.samistine.samistineutilities.SFeature;
-
+import com.samistine.mcplugins.api.FeatureInfo;
+import com.samistine.mcplugins.api.SFeatureListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 /**
@@ -39,7 +36,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
  * @author Samuel Seidel
  */
 @FeatureInfo(name = "AutoRespawn", desc = "Respawns the player automatically after he dies")
-public class AutoRespawn extends SFeature implements Listener {
+public class AutoRespawn extends SFeatureListener {
 
     private long delay;
 
@@ -50,12 +47,7 @@ public class AutoRespawn extends SFeature implements Listener {
     @Override
     protected void onEnable() {
         delay = getConfig().getLong("delay", 10);
-        getServer().getPluginManager().registerEvents(this, featurePlugin);
-    }
-
-    @Override
-    protected void onDisable() {
-        HandlerList.unregisterAll(this);
+        super.onEnable();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

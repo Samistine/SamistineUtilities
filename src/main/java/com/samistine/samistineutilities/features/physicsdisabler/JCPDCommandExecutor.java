@@ -1,6 +1,6 @@
 package com.samistine.samistineutilities.features.physicsdisabler;
 
-import com.samistine.samistineutilities.utils.annotations.command.Command;
+import com.samistine.mcplugins.api.utils.annotations.command.Command;
 
 import org.bukkit.command.CommandSender;
 

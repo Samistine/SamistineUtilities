@@ -4,8 +4,8 @@
 package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.FeatureInfo;
-import com.samistine.samistineutilities.SFeature;
+import com.samistine.mcplugins.api.FeatureInfo;
+import com.samistine.mcplugins.api.SFeature;
 
 import java.util.Arrays;
 import java.util.Collections;

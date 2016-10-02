@@ -23,6 +23,8 @@ package com.samistine.samistineutilities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+import com.samistine.mcplugins.api.FeatureInfo;
+import com.samistine.mcplugins.api.SFeature;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;

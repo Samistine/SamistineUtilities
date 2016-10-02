@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.samistine.mcplugins</groupId>
     <artifactId>SamistineUtilities</artifactId>
-    <version>3.3.0</version>
+    <version>4.0.0</version>
     <build>
         <finalName>SamistineUtilities</finalName>
         <resources>
@@ -91,29 +91,23 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>indexed-tree-map</groupId>
-            <artifactId>indexed-tree-map</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SamistineAPI</artifactId>
+            <version>1.0</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>indexed-tree-map</groupId>
+            <artifactId>indexed-tree-map</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <properties>

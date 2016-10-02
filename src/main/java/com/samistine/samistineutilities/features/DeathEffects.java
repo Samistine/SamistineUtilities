@@ -21,16 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.samistine.samistineutilities.features.deatheffects;
+package com.samistine.samistineutilities.features;
 
 import com.samistine.samistineutilities.SamistineUtilities;
-import com.samistine.samistineutilities.FeatureInfo;
-import com.samistine.samistineutilities.SFeature;
+import com.samistine.mcplugins.api.FeatureInfo;
+import com.samistine.mcplugins.api.SFeature;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -92,6 +93,39 @@ public final class DeathEffects extends SFeature implements Listener {
                 player.getWorld().createExplosion(pLoc, 0.0F);
             }
 
+        }
+    }
+
+    static final class SSound {
+
+        private final Sound sound;
+        private final float volume;
+        private final float pitch;
+
+        public SSound(Sound sound, float volume, float pitch) {
+            this.sound = sound;
+            this.volume = volume;
+            this.pitch = pitch;
+        }
+
+        public SSound(Map<String, Object> section) {
+            String _sound = (String) section.get("sound");
+            float _volume = (float) ((double) section.getOrDefault("volume", 10));
+            float _pitch = (float) ((double) section.getOrDefault("pitch", 1));
+
+            Sound __sound = Sound.valueOf(_sound.toUpperCase());
+
+            this.sound = __sound;
+            this.volume = _volume;
+            this.pitch = _pitch;
+        }
+
+        public void playToPlayer(Player player) {
+            player.playSound(player.getLocation(), sound, volume, pitch);
+        }
+
+        public void playToWorld(Player player) {
+            player.getWorld().playSound(player.getLocation(), sound, volume, pitch);
         }
     }
 
