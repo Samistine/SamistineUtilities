@@ -28,7 +28,6 @@ import com.samistine.mcplugins.api.SFeature;
 import com.samistine.samistineutilities.SamistineUtilities;
 import java.text.MessageFormat;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
@@ -54,7 +53,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 )
 public final class ChatLimiter extends SFeature implements Listener {
 
-    private final Map<UUID, PlayerDataHolder> data = new ConcurrentHashMap<>();
+    private final Map<Player, PlayerDataHolder> data = new ConcurrentHashMap<>();
 
     public ChatLimiter(SamistineUtilities main) {
         super(main);
@@ -83,7 +82,7 @@ public final class ChatLimiter extends SFeature implements Listener {
         this.message_move_comm = ChatColor.translateAlternateColorCodes('&', getConfig().getString("message_move_comm", message_move_comm));
         this.message_dupl_chat = ChatColor.translateAlternateColorCodes('&', getConfig().getString("message_dupl_chat", message_dupl_chat));
         this.message_dupl_comm = ChatColor.translateAlternateColorCodes('&', getConfig().getString("message_dupl_comm", message_dupl_comm));
-        getServer().getOnlinePlayers().forEach(player -> data.put(player.getUniqueId(), new PlayerDataHolder()));//This should be safe for parallel streams
+        getServer().getOnlinePlayers().forEach(player -> data.put(player, new PlayerDataHolder()));//This should be safe for parallel streams
         getServer().getPluginManager().registerEvents(this, featurePlugin);
     }
 
@@ -93,14 +92,14 @@ public final class ChatLimiter extends SFeature implements Listener {
         data.clear();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     protected void onPlayerJoin(PlayerJoinEvent e) {
-        data.put(e.getPlayer().getUniqueId(), new PlayerDataHolder());
+        data.put(e.getPlayer(), new PlayerDataHolder());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     protected void onPlayerQuit(PlayerQuitEvent e) {
-        data.remove(e.getPlayer().getUniqueId());
+        data.remove(e.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -181,11 +180,11 @@ public final class ChatLimiter extends SFeature implements Listener {
     }
 
     private PlayerDataHolder getPlayerHolder(Player p) {
-        PlayerDataHolder holder = data.get(p.getUniqueId());
+        PlayerDataHolder holder = data.get(p);
         if (holder == null) {
             getLogger().log(Level.WARNING, "Player {0} was not in HashMap, Reload?", p);
             holder = new PlayerDataHolder();
-            data.put(p.getUniqueId(), holder);
+            data.put(p, holder);
         }
         return holder;
     }
