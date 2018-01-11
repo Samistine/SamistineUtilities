@@ -3,13 +3,14 @@ package com.samistine.samistineutilities.features;
 import com.samistine.mcplugins.api.FeatureInfo;
 import com.samistine.mcplugins.api.SFeatureListener;
 import com.samistine.samistineutilities.SamistineUtilities;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.WeakHashMap;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -18,7 +19,6 @@ import org.bukkit.event.entity.FireworkExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 @FeatureInfo(
         name = "EntityLimit",
@@ -32,6 +32,7 @@ public final class EntityLimit extends SFeatureListener {
     }
 
     private int max_tiles = 2000;
+    private FireworkTracking fireworkTracking = new FireworkTracking();
 
     @Override
     protected void onEnable() {
@@ -70,18 +71,39 @@ public final class EntityLimit extends SFeatureListener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
-    protected void blockExcessiveFireworks(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getItem().getType() == Material.FIREWORK) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    protected void blockExcessiveFireworks(FireworkExplodeEvent event) {
+        fireworkTracking.handle(event);
+    }
 
-                for (Entity entity : event.getClickedBlock().getChunk().getEntities()) {
-                    if (entity.getType() == EntityType.FIREWORK) {
-                        event.setCancelled(true);
-                    }
-                }
+    static class FireworkTracking {
 
+        private Map<Chunk, Long> map = new WeakHashMap<>();
+
+        private void evict() {
+            long now = System.currentTimeMillis();
+            Iterator<Map.Entry<Chunk, Long>> iterator = map.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Chunk, Long> entry = iterator.next();
+                if (now >= entry.getValue()) iterator.remove();
             }
         }
+
+        public void handle(FireworkExplodeEvent event) {
+            Chunk chunk = event.getEntity().getLocation().getChunk();
+
+            evict();
+
+            boolean canExplodeHere = !map.containsKey(chunk);
+
+            if (canExplodeHere) {
+                int effectSize = event.getEntity().getFireworkMeta().getEffectsSize();
+                int longetivity = (int) Math.ceil(effectSize / 10.0);
+                map.put(chunk, System.currentTimeMillis() + longetivity *1000);
+            } else {
+                event.setCancelled(true);
+            }
+        }
+
     }
 }
